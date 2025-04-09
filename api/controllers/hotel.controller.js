@@ -1,4 +1,4 @@
-import Hotel from "../models/Hotel.js";
+import Hotel from '../models/Hotel.js';
 
 //create
 export const createHotel = async (req, res, next) => {
@@ -9,7 +9,7 @@ export const createHotel = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-}
+};
 
 //update
 export const updateHotel = async (req, res, next) => {
@@ -23,7 +23,7 @@ export const updateHotel = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-}
+};
 
 //delete
 export const deleteHotel = async (req, res, next) => {
@@ -33,7 +33,7 @@ export const deleteHotel = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-}
+};
 
 //getByID
 export const getHotel = async (req, res, next) => {
@@ -43,7 +43,7 @@ export const getHotel = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-}
+};
 
 //getAllHotels
 export const getHotels = async (req, res, next) => {
@@ -53,10 +53,52 @@ export const getHotels = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
+//getCityByName
+export const countByCity = async (req, res, next) => {
+    const cities = req.query.cities.split(',');
+    try {
+        const list = await Promise.all(
+            cities.map((city) => {
+                return Hotel.countDocuments({ city: city });
+            })
+        );
+        res.status(200).json(list);
+    } catch (error) {
+        next(error);
+    }
+};
 
+//getCountByType
+export const countByType = async (req, res, next) => {
+    try {
+        const hotelCount = await Hotel.countDocuments({ type: 'Hotel' });
+        const apartmentCount = await Hotel.countDocuments({
+            type: 'Apartment',
+        });
+        const resortCount = await Hotel.countDocuments({ type: 'Resort' });
+        const villaCount = await Hotel.countDocuments({ type: 'Villa' });
 
-
-
-
+        res.status(200).json([
+            {
+                type: 'Hotel',
+                count: hotelCount,
+            },
+            {
+                type: 'Apartments',
+                count: apartmentCount,
+            },
+            {
+                type: 'Resorts',
+                count: resortCount,
+            },
+            {
+                type: 'Villas',
+                count: villaCount,
+            },
+        ]);
+    } catch (error) {
+        next(error);
+    }
+};
