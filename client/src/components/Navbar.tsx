@@ -7,7 +7,7 @@ const Navbar = () => {
 				<img
 					src={logo}
 					alt='Logo'
-					className=' absolute top-2 h-36 w-36 object-contain rounded-full'
+					className='absolute top-3 h-36 w-36 object-contain rounded-full'
 				/>
 			</div>
 			<div className='flex gap-4'>

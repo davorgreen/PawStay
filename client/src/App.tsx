@@ -1,3 +1,4 @@
+import Header from './components/Header';
 import Navbar from './components/Navbar';
 import useFetch from './hooks/useFetch';
 
@@ -9,6 +10,7 @@ function App() {
 	return (
 		<div>
 			<Navbar />
+			<Header />
 		</div>
 	);
 }
