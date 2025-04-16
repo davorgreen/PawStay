@@ -1,4 +1,6 @@
+import Footer from './components/Footer';
 import Header from './components/Header';
+import Home from './components/Home';
 import Navbar from './components/Navbar';
 import useFetch from './hooks/useFetch';
 
@@ -8,9 +10,11 @@ function App() {
 	);
 
 	return (
-		<div>
+		<div className='min-h-screen flex flex-col'>
 			<Navbar />
 			<Header />
+			<Home />
+			<Footer />
 		</div>
 	);
 }
