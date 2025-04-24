@@ -25,11 +25,12 @@ export default function Home() {
 				console.log(res.data);
 				setHotelList(res.data);
 			} catch (err) {
-				setError(err);
+				if (axios.isAxiosError(err)) {
+					setError(err.response?.data?.message || err.message);
+				}
+				setLoading(false);
 			}
-			setLoading(false);
 		};
-
 		fetchData();
 	}, []);
 
