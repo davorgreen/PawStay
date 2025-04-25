@@ -1,8 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 const Navbar = () => {
-	const navigate = useNavigate();
 	return (
 		<div className='flex relative items-center justify-between bg-blue-300 h-20 px-8'>
 			<div className=''>
