@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 type PropertyTypeCardProps = {
@@ -10,6 +11,11 @@ const PropertyTypeCard: React.FC<PropertyTypeCardProps> = ({
 	type,
 	count,
 }) => {
+	const navigate = useNavigate();
+	const handleOpenProperty = () => {
+		navigate(`/accommodation/${type}`);
+	};
+
 	return (
 		<div className='w-96 h-full bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 ease-in-out'>
 			<img
@@ -24,7 +30,9 @@ const PropertyTypeCard: React.FC<PropertyTypeCardProps> = ({
 				</p>
 			</div>
 			<div className='flex items-center justify-center mb-4'>
-				<button className='bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg px-12 py-2 rounded-xl transition duration-300'>
+				<button
+					onClick={handleOpenProperty}
+					className='bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg px-12 py-2 rounded-xl transition duration-300'>
 					View
 				</button>
 			</div>

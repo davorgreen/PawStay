@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 const useFetch = <T>(url: string) => {
 	const [data, setData] = useState<T | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -13,7 +13,9 @@ const useFetch = <T>(url: string) => {
 				const res = await axios.get<T>(url);
 				setData(res.data);
 			} catch (err) {
-				setError(err);
+				if (axios.isAxiosError(err)) {
+					setError(err.response?.data?.message || err.message);
+				}
 			}
 			setLoading(false);
 		};
@@ -26,7 +28,9 @@ const useFetch = <T>(url: string) => {
 			const res = await axios.get<T>(url);
 			setData(res.data);
 		} catch (err) {
-			setError(err);
+			if (axios.isAxiosError(err)) {
+				setError(err.response?.data?.message || err.message);
+			}
 		}
 		setLoading(false);
 	};

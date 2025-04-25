@@ -86,15 +86,15 @@ export const countByType = async (req, res, next) => {
                 count: hotelCount,
             },
             {
-                type: 'Apartments',
+                type: 'Apartment',
                 count: apartmentCount,
             },
             {
-                type: 'Resorts',
+                type: 'Resort',
                 count: resortCount,
             },
             {
-                type: 'Villas',
+                type: 'Villa',
                 count: villaCount,
             },
         ]);
@@ -102,3 +102,14 @@ export const countByType = async (req, res, next) => {
         next(error);
     }
 };
+
+//getAllAccommodationByType
+export const getAllAccommodationByType = async (req, res, next) => {
+    const { type } = req.query;
+    try {
+        const accommodation = await Hotel.find({ type });
+        res.status(200).json(accommodation);
+    } catch (error) {
+        next(error)
+    }
+}

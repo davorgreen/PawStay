@@ -1,21 +1,31 @@
+import AccommodationList from './components/AccommodationList';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
-import useFetch from './hooks/useFetch';
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+} from 'react-router-dom';
 
 function App() {
-	const { data, loading, error } = useFetch(
-		'api/hotels/countByCity?cities=Subotica,Madird,London'
-	);
-
 	return (
-		<div className='min-h-screen flex flex-col'>
-			<Navbar />
-			<Header />
-			<Home />
-			<Footer />
-		</div>
+		<Router>
+			<div className='min-h-screen flex flex-col'>
+				<Navbar />
+				<Header />
+				<Routes>
+					<Route path='/' element={<Home />} />
+					<Route
+						path='/accommodation/:type'
+						element={<AccommodationList />}
+					/>
+					{/*  */}
+				</Routes>
+				<Footer />
+			</div>
+		</Router>
 	);
 }
 
