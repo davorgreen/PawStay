@@ -1,33 +1,52 @@
-import React from 'react';
+import { Rating } from '@mui/material';
+import logo from '../assets/logo.png';
 
 type HotelCardProps = {
 	name: string;
-	location: string;
-	image: string;
-	price: string;
+	photos: string[];
+	city: string;
+	address: string;
+	rating: number;
 };
 
 const HotelCard: React.FC<HotelCardProps> = ({
 	name,
-	location,
-	image,
-	price,
+	city,
+	address,
+	photos,
+	rating,
 }) => {
 	return (
-		<div className='w-96 h-full bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 ease-in-out'>
+		<div className='w-full sm:w-96  h-full bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 ease-in-out text-center'>
 			<img
-				src={image}
+				src={photos?.[0] || logo}
 				alt={name}
-				className='h-48 w-full object-cover'
+				className='h-48 w-full object-contain'
 			/>
 			<div className='p-4 flex flex-col items-center gap-4'>
 				<h3 className='text-xl font-semibold text-blue-500'>
 					{name}
 				</h3>
-				<p className='text-gray-500 text-md'>{location}</p>
-				<p className='text-blue-500 font-medium mt-2 text-xl'>
-					{price} / night
+				<p className='text-gray-500 text-md'>
+					{' '}
+					{address}, {city}
 				</p>
+				<div className='text-lg font-medium flex items-center gap-2'>
+					{rating ? (
+						<>
+							{}
+							<span>{rating}</span>
+							<Rating
+								name='half-rating-read'
+								value={rating}
+								precision={0.5}
+								readOnly
+							/>
+						</>
+					) : (
+						<p>No rating available</p>
+					)}
+				</div>
 			</div>
 			<div className='flex items-center justify-center mb-4'>
 				<button className='bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg px-12 py-2 rounded-xl  transition duration-300'>
