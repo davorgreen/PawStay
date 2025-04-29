@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import HotelCard from '../components/HotelCard.tsx';
-
 import PropertyTypeCard from './PropertyTypeCard.tsx';
 import useFetch from '../hooks/useFetch.ts';
 import axios from 'axios';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Pagination, Navigation } from 'swiper/modules';
 
 type HotelType = 'Hotel' | 'Apartments' | 'Resorts' | 'Villas';
 
@@ -94,7 +98,18 @@ export default function Home() {
 				Guest Favorites
 			</h2>
 			<div className=''>
-				<div className='grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full'>
+				<Swiper
+					spaceBetween={20}
+					slidesPerView={1}
+					breakpoints={{
+						640: { slidesPerView: 2 },
+						768: { slidesPerView: 3 },
+						1024: { slidesPerView: 4 },
+					}}
+					pagination={{ el: '.custom-pagination', clickable: true }}
+					navigation
+					modules={[Pagination, Navigation]}
+					className='w-full'>
 					{accommodationLoading ? (
 						<p className='text-white text-lg'>Loading...</p>
 					) : accommodationError ? (
@@ -102,9 +117,13 @@ export default function Home() {
 					) : (
 						OnlyRatedAccommodation?.sort(
 							(a, b) => b.rating - a.rating
-						).map((hotel) => <HotelCard key={hotel._id} {...hotel} />)
+						).map((hotel) => (
+							<SwiperSlide key={hotel._id}>
+								<HotelCard key={hotel._id} {...hotel} />
+							</SwiperSlide>
+						))
 					)}
-				</div>
+				</Swiper>
 			</div>
 		</div>
 	);
