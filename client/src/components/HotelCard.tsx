@@ -17,7 +17,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
 	rating,
 }) => {
 	return (
-		<div className='w-full sm:w-96  h-full bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 ease-in-out text-center'>
+		<div className=' bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 ease-in-out text-center'>
 			<img
 				src={photos?.[0] || logo}
 				alt={name}

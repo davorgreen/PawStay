@@ -7,10 +7,10 @@ const Header = () => {
 			style={{
 				backgroundImage: `url(${cover})`,
 			}}>
-			<h2 className=' bg-blue-400 text-white text-2xl md:text-3xl font-bold mb-4 mt-10'>
+			<h2 className='hidden lg:block bg-blue-400 text-white text-2xl md:text-3xl font-bold mb-4'>
 				Join now and enjoy a lifetime discount!
 			</h2>
-			<p className=' bg-blue-400 text-white font-semibold text-lg md:text-xl mb-6'>
+			<p className='hidden lg:block bg-blue-400 text-white font-semibold text-lg md:text-xl mb-6'>
 				Register or sign in today and unlock exclusive benefits that
 				last forever.
 			</p>

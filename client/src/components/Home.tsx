@@ -71,7 +71,7 @@ export default function Home() {
 	}, []);
 
 	return (
-		<div className='min-h-screen bg-blue-300 px-4 py-8 flex flex-col justify-center  gap-8'>
+		<div className='min-h-screen bg-blue-300 px-4 py-8 flex flex-col justify-center gap-8'>
 			<h1 className='text-4xl md:text-5xl font-bold text-start text-white'>
 				Best Destinations
 			</h1>
@@ -79,7 +79,7 @@ export default function Home() {
 			<h2 className='text-2xl md:text-3xl font-semibold mb-4 text-white'>
 				Browse by property type
 			</h2>
-			<div className='grid w-screen gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 '>
+			<div className='grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 				{loading ? (
 					<p className='text-white text-lg'>Loading...</p>
 				) : error ? (

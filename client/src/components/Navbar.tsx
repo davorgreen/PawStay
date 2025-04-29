@@ -9,7 +9,7 @@ const Navbar = () => {
 					<img
 						src={logo}
 						alt='Logo'
-						className='absolute top-3 h-36 w-36 object-contain rounded-full'
+						className=' absolute top-3 h-36 w-36 object-contain rounded-full'
 					/>
 				</Link>
 			</div>
