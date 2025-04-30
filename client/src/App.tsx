@@ -1,30 +1,37 @@
 import AccommodationList from './components/AccommodationList';
-import Footer from './components/Footer';
-import Header from './components/Header';
 import Home from './components/Home';
-import Navbar from './components/Navbar';
 import {
 	BrowserRouter as Router,
 	Routes,
 	Route,
 } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Layout from './components/Layout';
 
 function App() {
 	return (
 		<Router>
-			<div className='min-h-screen flex flex-col'>
-				<Navbar />
-				<Header />
-				<Routes>
-					<Route path='/' element={<Home />} />
-					<Route
-						path='/accommodation/:type'
-						element={<AccommodationList />}
-					/>
-					{/*  */}
-				</Routes>
-				<Footer />
-			</div>
+			<Routes>
+				<Route
+					path='/'
+					element={
+						<Layout>
+							<Home />
+						</Layout>
+					}
+				/>
+				<Route
+					path='/accommodation/:type'
+					element={
+						<Layout>
+							<AccommodationList />
+						</Layout>
+					}
+				/>
+				<Route path='/login' element={<Login />} />
+				<Route path='/register' element={<Register />} />
+			</Routes>
 		</Router>
 	);
 }

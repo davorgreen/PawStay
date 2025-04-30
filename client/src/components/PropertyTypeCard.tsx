@@ -17,7 +17,7 @@ const PropertyTypeCard: React.FC<PropertyTypeCardProps> = ({
 	};
 
 	return (
-		<div className='w-80 md:w-full bg-white rounded-2xl shadow-md  hover:shadow-xl transition duration-300 ease-in-out text-center'>
+		<div className='bg-white rounded-2xl shadow-md  hover:shadow-xl transition duration-300 ease-in-out text-center'>
 			<img
 				src={logo}
 				alt={type}
