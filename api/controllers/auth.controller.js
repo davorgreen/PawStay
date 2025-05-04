@@ -2,9 +2,28 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import { createError } from '../utils/error.js';
 import jwt from 'jsonwebtoken';
+import validator from "validator";
 
 export const register = async (req, res, next) => {
     try {
+        const { username, email, password } = req.body;
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!emailRegex.test(email)) {
+            return next(createError('400', 'Invalid email format'));
+        }
+
+        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+        if (existingUser) {
+            return next(createError('400', 'A user with that email or username already exists.'))
+        }
+
+        const passwordRegex = /^(?=[A-Za-z0-9]*\d)(?=[A-Z])[A-Za-z0-9]{8,}$/;
+        if (passwordRegex.test(password)) {
+            return next(createError('400', 'Password must be at least 8 characters long, start with an uppercase letter, and contain at least one number.'))
+        }
+
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(req.body.password, salt);
 
