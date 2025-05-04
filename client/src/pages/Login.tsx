@@ -2,6 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface LoginForm {
 	username: string;
@@ -15,6 +17,7 @@ const Login = () => {
 	});
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<null | string>(null);
+	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const navigate = useNavigate();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,16 +27,18 @@ const Login = () => {
 	};
 
 	//submit form
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmitLoginForm = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
 		try {
 			await axios.post('/api/auth/login', formData);
+			toast.success('Login successful!');
 			navigate('/');
 		} catch (err) {
-			console.log(err);
 			if (axios.isAxiosError(err)) {
-				setError(err.response?.data?.message || err.message);
+				const message = err.response?.data?.message || err.message;
+				setError(message);
+				toast.error(message);
 			}
 		} finally {
 			setLoading(false);
@@ -54,7 +59,7 @@ const Login = () => {
 						Login
 					</h2>
 					<form
-						onSubmit={handleSubmit}
+						onSubmit={handleSubmitLoginForm}
 						className='flex flex-col gap-6'>
 						<div>
 							<label className='block mb-2 text-blue-900 font-semibold'>
@@ -74,15 +79,26 @@ const Login = () => {
 							<label className=' block mb-2 text-blue-900 font-semibold'>
 								Password
 							</label>
-							<input
-								type='password'
-								name='password'
-								value={formData.password}
-								onChange={handleChange}
-								required
-								autoComplete='current-password'
-								className='w-full px-4 py-2 border bg-white text-black border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-700'
-							/>
+							<div className='flex justify-center items-center gap-2'>
+								<input
+									type={showPassword ? 'text' : 'password'}
+									name='password'
+									value={formData.password}
+									onChange={handleChange}
+									required
+									autoComplete='current-password'
+									className='w-full px-4 py-2 border bg-white text-black border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-700'
+								/>
+								<span
+									className='right-3 text-blue-800 cursor-pointer'
+									onClick={() => setShowPassword((prev) => !prev)}>
+									{showPassword ? (
+										<FaEyeSlash size={30} />
+									) : (
+										<FaEye size={30} />
+									)}
+								</span>
+							</div>
 						</div>
 						{error && (
 							<p className='text-red-600 text-sm mt-1'>{error}</p>
