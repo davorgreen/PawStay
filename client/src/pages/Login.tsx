@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useResolvedPath } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { useState } from 'react';
 import axios from 'axios';
@@ -18,6 +18,7 @@ const Login = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<null | string>(null);
 	const [showPassword, setShowPassword] = useState<boolean>(false);
+	const [user, setUser] = useState(null);
 	const navigate = useNavigate();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +32,16 @@ const Login = () => {
 		e.preventDefault();
 		setLoading(true);
 		try {
-			await axios.post('/api/auth/login', formData);
+			await axios.post('/api/auth/login', formData, {
+				withCredentials: true,
+			});
+			const userRes = await axios.get('/api/auth/user', {
+				withCredentials: true,
+			});
+			setUser({
+				...userRes.data.user,
+				isAdmin: userRes.data.isAdmin,
+			});
 			toast.success('Login successful!');
 			navigate('/');
 		} catch (err) {
