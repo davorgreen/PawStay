@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useUser } from '../hooks/useUser';
 
 interface LoginForm {
 	username: string;
@@ -19,6 +20,8 @@ const Login = () => {
 	const [error, setError] = useState<null | string>(null);
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const navigate = useNavigate();
+	const passwordRegex = /^[A-Z](?=.*\d)[A-Za-z0-9]{7,}$/;
+	const { setUser } = useUser();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setError(null);
@@ -26,9 +29,25 @@ const Login = () => {
 		setFormData((prevData) => ({ ...prevData, [name]: value }));
 	};
 
+	//validate login form
+	const validateForm = () => {
+		if (!formData.username || !formData.password) {
+			setError('All fields are required!');
+			return false;
+		}
+		if (!passwordRegex.test(formData.password)) {
+			setError('Invalid email format');
+			return false;
+		}
+		return true;
+	};
+
 	//submit form
 	const handleSubmitLoginForm = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (!validateForm()) {
+			return;
+		}
 		setLoading(true);
 		try {
 			await axios.post('/api/auth/login', formData, {

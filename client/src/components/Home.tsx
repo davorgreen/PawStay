@@ -8,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Pagination, Navigation } from 'swiper/modules';
+import { useUser } from '../hooks/useUser.ts';
 
 type HotelType = 'Hotel' | 'Apartments' | 'Resorts' | 'Villas';
 
@@ -40,6 +41,7 @@ export default function Home() {
 	const [accommodationError, setAccommodationError] = useState<
 		string | null
 	>(null);
+	const { user } = useUser();
 
 	const OnlyRatedAccommodation = AccommodationListByRating.filter(
 		(acc) => {
@@ -74,6 +76,7 @@ export default function Home() {
 		<div className='min-h-screen bg-blue-300 px-4 py-8 flex flex-col justify-center gap-8'>
 			<h1 className='text-4xl md:text-5xl font-bold text-start text-white'>
 				Best Destinations
+				{user ? user.username : 'no user found'}
 			</h1>
 
 			<h2 className='text-2xl md:text-3xl font-semibold mb-4 text-white'>

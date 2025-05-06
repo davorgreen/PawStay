@@ -5,14 +5,14 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-interface LoginForm {
+interface RegisterForm {
 	username: string;
 	email: string;
 	password: string;
 }
 
 const Register = () => {
-	const [formData, setFormData] = useState<LoginForm>({
+	const [formData, setFormData] = useState<RegisterForm>({
 		username: '',
 		email: '',
 		password: '',
@@ -21,6 +21,9 @@ const Register = () => {
 	const [error, setError] = useState<null | string>(null);
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const navigate = useNavigate();
+	const emailRegex =
+		/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+	const passwordRegex = /^[A-Z](?=.*\d)[A-Za-z0-9]{7,}$/;
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setError(null);
@@ -28,14 +31,32 @@ const Register = () => {
 		setFormData((prevData) => ({ ...prevData, [name]: value }));
 	};
 
+	//validate register form
+	const validateForm = () => {
+		if (!emailRegex.test(formData.email)) {
+			setError('Invalid email format');
+			return false;
+		}
+		if (!passwordRegex.test(formData.password)) {
+			setError(
+				'Password must be at least 8 characters long, start with an uppercase letter, and contain at least one number.'
+			);
+			return false;
+		}
+		return true;
+	};
+
 	//submit form
 	const handleSubmitRegisterForm = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (!validateForm()) {
+			return;
+		}
 		setLoading(true);
 		try {
 			await axios.post('/api/auth/register', formData);
 			toast.success('Register successful!');
-			navigate('/');
+			navigate('/login');
 		} catch (err) {
 			console.log(err);
 			if (axios.isAxiosError(err)) {
