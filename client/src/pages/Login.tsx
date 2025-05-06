@@ -1,4 +1,4 @@
-import { Link, useNavigate, useResolvedPath } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { useState } from 'react';
 import axios from 'axios';
@@ -18,7 +18,6 @@ const Login = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<null | string>(null);
 	const [showPassword, setShowPassword] = useState<boolean>(false);
-	const [user, setUser] = useState(null);
 	const navigate = useNavigate();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
