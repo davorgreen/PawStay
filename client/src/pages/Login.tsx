@@ -21,7 +21,7 @@ const Login = () => {
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const passwordRegex = /^[A-Z](?=.*\d)[A-Za-z0-9]{7,}$/;
-	const { setUser } = useUser();
+	const { login } = useUser();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setError(null);
@@ -56,7 +56,7 @@ const Login = () => {
 			const userRes = await axios.get('/api/auth/user', {
 				withCredentials: true,
 			});
-			setUser({
+			login({
 				...userRes.data.user,
 				isAdmin: userRes.data.isAdmin,
 			});
@@ -83,6 +83,11 @@ const Login = () => {
 			</Link>
 			<div className='min-h-screen flex justify-center items-center bg-blue-300'>
 				<div className='w-[90%] max-w-[500px] bg-blue-200 border-4 border-blue-800 p-8 rounded-xl shadow-lg'>
+					<Link
+						to={'/register'}
+						className='flex justify-end mb-4 underline text-md text-blue-900'>
+						Need an account? Register now.
+					</Link>
 					<h2 className='text-2xl font-bold text-center mb-6 text-blue-900'>
 						Login
 					</h2>

@@ -79,6 +79,11 @@ const Register = () => {
 			</Link>
 			<div className='min-h-screen flex justify-center items-center bg-blue-300'>
 				<div className='w-[90%] max-w-[500px] bg-blue-200 border-4 border-blue-800 p-8 rounded-xl shadow-lg'>
+					<Link
+						to={'/login'}
+						className='flex justify-end mb-4 underline text-md text-blue-900'>
+						I already have an account? Click here to log in
+					</Link>
 					<h2 className='text-2xl font-bold text-center mb-6 text-blue-900'>
 						Register
 					</h2>
