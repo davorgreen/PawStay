@@ -10,11 +10,12 @@ import Register from './pages/Register';
 import Layout from './components/Layout';
 import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProfilePage from './components/ProfilePage';
 
 function App() {
 	return (
 		<Router>
-			<ToastContainer position='top-right' autoClose={3000} />
+			<ToastContainer position='top-center' autoClose={3000} />
 			<Routes>
 				<Route element={<ProtectedRoute />}>
 					<Route
@@ -33,6 +34,7 @@ function App() {
 							</Layout>
 						}
 					/>
+					<Route path='/profile' element={<ProfilePage />} />
 				</Route>
 				<Route path='/login' element={<Login />} />
 				<Route path='/register' element={<Register />} />

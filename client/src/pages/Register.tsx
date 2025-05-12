@@ -58,7 +58,6 @@ const Register = () => {
 			toast.success('Register successful!');
 			navigate('/login');
 		} catch (err) {
-			console.log(err);
 			if (axios.isAxiosError(err)) {
 				const message = err.response?.data?.message || err.message;
 				setError(message);

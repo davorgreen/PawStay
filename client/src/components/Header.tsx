@@ -14,9 +14,6 @@ const Header = () => {
 				Register or sign in today and unlock exclusive benefits that
 				last forever.
 			</p>
-			<button className=' mt-10 text-white text-xl font-semibold hover:bg-blue-500 bg-blue-600 px-6 py-3 rounded-lg transition duration-300 ease-in-out'>
-				Sign in / Register
-			</button>
 			<div className='mt-10'>
 				<SearchField />
 			</div>

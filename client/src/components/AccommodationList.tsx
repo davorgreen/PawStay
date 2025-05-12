@@ -25,7 +25,6 @@ const AccommodationList: React.FC = () => {
 		`/api/hotels/byType?type=${type}`
 	);
 
-	console.log(data);
 	return (
 		<div className='flex justify-center items-center flex-wrap gap-10 mt-10 mb-10'>
 			{loading ? (
