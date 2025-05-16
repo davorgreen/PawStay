@@ -54,7 +54,7 @@ export const login = async (req, res, next) => {
         const token = jwt.sign(
             { id: user._id, isAdmin: user.isAdmin },
             process.env.JWT,
-            { expiresIn: '1h' }
+            { expiresIn: '1m' }
         );
 
         const { password, isAdmin, ...otherDetails } = user._doc;
@@ -69,6 +69,16 @@ export const login = async (req, res, next) => {
         next(err);
     }
 };
+
+export const logout = (req, res) => {
+    res.clearCookie('access_token', {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+    });
+    res.status(200).json({ message: 'Logged out successfully' });
+};
+
 
 export const getUser = (req, res, next) => {
     const token = req.cookies.access_token;

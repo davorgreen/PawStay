@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { User, UserContext } from './UserContext';
+import axios from 'axios';
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	children,
@@ -23,7 +24,18 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 		setUser(userData);
 	};
 
-	const logout = () => {
+	const logout = async () => {
+		try {
+			await axios.post(
+				'/api/auth/logout',
+				{},
+				{
+					withCredentials: true,
+				}
+			);
+		} catch (err) {
+			console.error('Logout error:', err);
+		}
 		localStorage.removeItem('user');
 		setUser(null);
 	};

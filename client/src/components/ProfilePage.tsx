@@ -46,7 +46,11 @@ const ProfilePage = () => {
 	return (
 		<div className='flex justify-center items-center w-full h-screen bg-blue-300'>
 			<div className='flex flex-col justify-center items-center w-full max-w-md p-6 bg-blue-50 rounded-lg shadow-md'>
-				<Link to={'/'}>Back to HOME PAGE</Link>
+				<Link
+					to={'/'}
+					className='text-md text-blue-500 mb-4 underline font-semibold'>
+					Back to HOME PAGE
+				</Link>
 				<h1 className='text-3xl font-bold text-center text-blue-600 mb-6'>
 					Edit Profile
 				</h1>

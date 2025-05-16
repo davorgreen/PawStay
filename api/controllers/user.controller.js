@@ -4,20 +4,28 @@ import User from "../models/User.js";
 export const updateUser = async (req, res, next) => {
     try {
         const { email, username } = req.body;
-        if (email) {
+        const userId = req.params.id;
+
+        const currentUser = await User.findById(userId)
+        if (!currentUser) {
+            return res.status(400).json({ message: 'User not found.' })
+        }
+
+        if (email && email !== currentUser.email) {
             const existingEmail = await User.findOne({ email });
-            if (existingEmail) {
+            if (existingEmail && existingEmail._id.toString() !== userId) {
                 return res.status(400).json({ message: 'Email is already in use!' });
             }
         }
-        if (username) {
+
+        if (username && username !== currentUser.username) {
             const existingUsernameUser = await User.findOne({ username });
-            if (existingUsernameUser) {
+            if (existingUsernameUser && existingUsernameUser._id.toString() !== userId) {
                 return res.status(400).json({ message: 'Username is already in use.' });
             }
         }
         const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
+            userId,
             { $set: req.body },
             { new: true }
         );
@@ -47,7 +55,7 @@ export const getUser = async (req, res, next) => {
     }
 }
 
-//getUSers
+//getUsers
 export const getUsers = async (req, res, next) => {
     try {
         const users = await User.find();
