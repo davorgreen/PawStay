@@ -13,11 +13,13 @@ const ProfilePage = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (user) {
+		if (!user) {
+			navigate('/login');
+		} else {
 			setUsername(user.username);
 			setEmail(user.email);
 		}
-	}, [user]);
+	}, [user, navigate]);
 
 	const handleUpdateProfile = async (
 		e: React.FormEvent<HTMLFormElement>

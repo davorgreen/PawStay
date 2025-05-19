@@ -11,34 +11,47 @@ import Layout from './components/Layout';
 import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './components/ProfilePage';
+import useAxiosInterceptors from './hooks/useAxiosInterceptors';
+import { ReactNode } from 'react';
+
+interface AxiosWrapperProps {
+	children: ReactNode;
+}
+
+const AxiosWrapper = ({ children }: AxiosWrapperProps) => {
+	useAxiosInterceptors();
+	return <>{children}</>;
+};
 
 function App() {
 	return (
 		<Router>
 			<ToastContainer position='top-center' autoClose={3000} />
-			<Routes>
-				<Route element={<ProtectedRoute />}>
-					<Route
-						path='/'
-						element={
-							<Layout>
-								<Home />
-							</Layout>
-						}
-					/>
-					<Route
-						path='/accommodation/:type'
-						element={
-							<Layout>
-								<AccommodationList />
-							</Layout>
-						}
-					/>
-					<Route path='/profile' element={<ProfilePage />} />
-				</Route>
-				<Route path='/login' element={<Login />} />
-				<Route path='/register' element={<Register />} />
-			</Routes>
+			<AxiosWrapper>
+				<Routes>
+					<Route element={<ProtectedRoute />}>
+						<Route
+							path='/'
+							element={
+								<Layout>
+									<Home />
+								</Layout>
+							}
+						/>
+						<Route
+							path='/accommodation/:type'
+							element={
+								<Layout>
+									<AccommodationList />
+								</Layout>
+							}
+						/>
+						<Route path='/profile' element={<ProfilePage />} />
+					</Route>
+					<Route path='/login' element={<Login />} />
+					<Route path='/register' element={<Register />} />
+				</Routes>
+			</AxiosWrapper>
 		</Router>
 	);
 }
