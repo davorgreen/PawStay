@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import HotelCard from '../components/HotelCard.tsx';
 import PropertyTypeCard from './PropertyTypeCard.tsx';
 import useFetch from '../hooks/useFetch.ts';
@@ -16,7 +16,7 @@ interface HotelTypeCount {
 	count: number;
 }
 
-interface AccommodationList {
+export interface AccommodationList {
 	_id: string;
 	name: string;
 	type: string;
@@ -28,7 +28,6 @@ interface AccommodationList {
 	description: string;
 	rating: number;
 	cheapestPrice: number;
-	rooms: string[];
 	featured: boolean;
 }
 
@@ -41,11 +40,9 @@ export default function Home() {
 		string | null
 	>(null);
 
-	const OnlyRatedAccommodation = AccommodationListByRating.filter(
-		(acc) => {
-			return acc.rating > 0;
-		}
-	);
+	const OnlyRatedAccommodation = useMemo(() => {
+		return AccommodationListByRating.filter((acc) => acc.rating > 0);
+	}, [AccommodationListByRating]);
 
 	const { data, loading, error } = useFetch<HotelTypeCount[]>(
 		'api/hotels/countByType'

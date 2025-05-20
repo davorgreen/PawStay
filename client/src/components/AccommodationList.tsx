@@ -12,7 +12,6 @@ interface AccommodationType {
 	title: string;
 	description: string;
 	rating: number;
-	rooms?: string[];
 	cheapestPrice: number;
 	featured: boolean;
 	_id: string;
