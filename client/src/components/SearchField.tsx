@@ -80,7 +80,8 @@ function SearchField() {
 		);
 	}, [allHotels, location]);
 
-	const handleSearch = () => {
+	//booking hotel
+	const handleBookingHotel = async () => {
 		if (!checkIn || !checkOut) {
 			toast.warning('Check-in or Check-out date are not selected');
 			return;
@@ -106,7 +107,20 @@ function SearchField() {
 			toast.warning('Check-out date must be after check-in date.');
 			return;
 		}
-		console.log(location, checkInDate, checkOutDate, guests);
+		setLoadingHotels(true);
+		try {
+			const payload = { location, checkInDate, checkOutDate, guests };
+			await axios.post('/api/bookings', payload, {
+				withCredentials: true,
+			});
+			toast.success('Booking completed successfully!');
+		} catch (err) {
+			if (axios.isAxiosError(err)) {
+				setError(err.response?.data?.message || err.message);
+			}
+		} finally {
+			setLoadingHotels(false);
+		}
 	};
 
 	return (
@@ -211,7 +225,7 @@ function SearchField() {
 			</div>
 
 			<button
-				onClick={handleSearch}
+				onClick={handleBookingHotel}
 				className='bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition'>
 				Search
 			</button>
