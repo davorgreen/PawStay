@@ -32,5 +32,31 @@ export const bookingAccommodation = async (req, res, next) => {
     } catch (err) {
         next(err)
     }
+}
 
+export const getBookedDaysByHotelName = async (req, res, next) => {
+    try {
+        const hotelName = req.params.hotelName;
+        console.log(hotelName)
+        const hotel = await Hotel.findOne({ name: hotelName });
+        if (!hotel) return next(createError(404, 'No Hotel found'));
+
+        const bookedDays = await Booking.find({ accommodationId: hotel._id });
+        if (bookedDays.length === 0) return next(createError(404, 'No Dates found'));
+
+        const reservedDates = bookedDays.flatMap((booked) => {
+            const dates = [];
+            let current = new Date(booked.checkIn);
+            let checkOut = new Date(booked.checkOut);
+
+            while (current <= checkOut) {
+                dates.push(new Date(current));
+                current.setDate(current.getDate() + 1);
+            }
+            return dates;
+        })
+        res.json(reservedDates)
+    } catch (err) {
+        next(err)
+    }
 }

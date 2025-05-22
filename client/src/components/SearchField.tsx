@@ -9,6 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import { AccommodationList } from './Home';
 import { toast } from 'react-toastify';
+import debounce from 'lodash.debounce';
 
 interface Guests {
 	adults: number;
@@ -29,6 +30,8 @@ function SearchField() {
 	const [loadingHotels, setLoadingHotels] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [showDropdown, setShowDropdown] = useState<boolean>(false);
+	const [disableDates, setDisableDates] = useState<Date[]>([]);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleGuestChange = (type: keyof Guests, value: number) => {
 		setGuests((prev) => ({
@@ -36,6 +39,41 @@ function SearchField() {
 			[type]: Math.max(0, value),
 		}));
 	};
+
+	const fetchReservedDates = async () => {
+		setLoading(true);
+		setError(null);
+		setDisableDates([]);
+		try {
+			const res = await axios.get<string[]>(
+				`/api/bookings/${location}/reserved-dates`
+			);
+			const convertedDates = res.data.map(
+				(dateStr) => new Date(dateStr)
+			);
+			setDisableDates(convertedDates);
+		} catch (err) {
+			if (axios.isAxiosError(err)) {
+				setError(err.response?.data?.message || err.message);
+			}
+		} finally {
+			setLoading(false);
+			console.log(disableDates);
+		}
+	};
+
+	//getReservedDatesByHotelName
+	useEffect(() => {
+		if (!location) {
+			setDisableDates([]);
+			return;
+		}
+		const debouncedFetch = debounce(fetchReservedDates, 1000);
+		debouncedFetch();
+		return () => {
+			debouncedFetch.cancel();
+		};
+	}, [location]);
 
 	//dropdown
 	useEffect(() => {
@@ -114,6 +152,7 @@ function SearchField() {
 				withCredentials: true,
 			});
 			toast.success('Booking completed successfully!');
+			fetchReservedDates();
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
 				setError(err.response?.data?.message || err.message);
@@ -160,6 +199,7 @@ function SearchField() {
 					selected={checkIn}
 					minDate={new Date()}
 					onChange={(date) => setCheckIn(date)}
+					excludeDates={disableDates}
 					placeholderText='Add check-in date'
 					className='outline-none w-36 text-gray-700'
 				/>
@@ -170,6 +210,7 @@ function SearchField() {
 					selected={checkOut}
 					minDate={new Date()}
 					onChange={(date) => setCheckOut(date)}
+					excludeDates={disableDates}
 					placeholderText='Add check-out date'
 					className='outline-none w-36 text-gray-700'
 				/>
