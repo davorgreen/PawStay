@@ -11,7 +11,7 @@ import { AccommodationList } from './Home';
 import { toast } from 'react-toastify';
 import debounce from 'lodash.debounce';
 
-interface Guests {
+export interface Guests {
 	adults: number;
 	children: number;
 }

@@ -1,5 +1,6 @@
 import { Rating } from '@mui/material';
 import logo from '../assets/logo.png';
+import { Link } from 'react-router-dom';
 
 type HotelCardProps = {
 	name: string;
@@ -7,6 +8,7 @@ type HotelCardProps = {
 	city: string;
 	address: string;
 	rating: number;
+	_id: string;
 };
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -15,6 +17,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
 	address,
 	photos,
 	rating,
+	_id,
 }) => {
 	return (
 		<div className=' bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 ease-in-out text-center'>
@@ -49,9 +52,11 @@ const HotelCard: React.FC<HotelCardProps> = ({
 				</div>
 			</div>
 			<div className='flex items-center justify-center mb-4'>
-				<button className='bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg px-12 py-2 rounded-xl  transition duration-300'>
-					Book
-				</button>
+				<Link to={`/hotel/${_id}`}>
+					<button className='bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg px-12 py-2 rounded-xl  transition duration-300'>
+						Book
+					</button>
+				</Link>
 			</div>
 		</div>
 	);

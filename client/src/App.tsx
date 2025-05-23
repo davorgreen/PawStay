@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './components/ProfilePage';
 import useAxiosInterceptors from './hooks/useAxiosInterceptors';
 import { ReactNode } from 'react';
+import HotelDetailsPage from './pages/HotelDetailsPage';
 
 interface AxiosWrapperProps {
 	children: ReactNode;
@@ -43,6 +44,14 @@ function App() {
 							element={
 								<Layout>
 									<AccommodationList />
+								</Layout>
+							}
+						/>
+						<Route
+							path='/hotel/:id'
+							element={
+								<Layout>
+									<HotelDetailsPage />
 								</Layout>
 							}
 						/>
