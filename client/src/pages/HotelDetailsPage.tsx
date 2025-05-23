@@ -62,6 +62,10 @@ const HotelDetailsPage = () => {
 			});
 			toast.success('Booking completed successfully!');
 			setShowGuestOptions(false);
+			setGuests({
+				adults: 1,
+				children: 0,
+			});
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
 				setErrorMsg(err.response?.data?.message || err.message);
