@@ -3,7 +3,7 @@ import useFetch from '../hooks/useFetch';
 import { AccommodationList } from '../components/Home';
 import logo from '../assets/logo.png';
 import axios from 'axios';
-import { Guests } from '../components/SearchField';
+import SearchField, { Guests } from '../components/SearchField';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -69,6 +69,7 @@ const HotelDetailsPage = () => {
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
 				setErrorMsg(err.response?.data?.message || err.message);
+				toast.warning(errorMsg);
 			} else {
 				setErrorMsg('An unknown error occurred.');
 			}
@@ -79,7 +80,8 @@ const HotelDetailsPage = () => {
 
 	return (
 		<div className='max-w-5xl mx-auto px-4 py-8'>
-			<div className='grid md:grid-cols-2 gap-8 bg-white shadow-xl rounded-2xl overflow-hidden'>
+			<SearchField />
+			<div className='grid md:grid-cols-2 gap-8 bg-blue-200 shadow-xl rounded-2xl overflow-hidden'>
 				<div className='w-full h-64 md:h-auto'>
 					<img
 						src={data.photos[0] || logo}
@@ -113,7 +115,7 @@ const HotelDetailsPage = () => {
 						<button
 							onClick={handleToggleGuestOptions}
 							className='bg-blue-600 text-white font-bold px-6 py-2 rounded-xl hover:bg-blue-700 transition duration-200'>
-							Book for Today
+							Only Book for Today
 						</button>
 
 						{showGuestOptions && (

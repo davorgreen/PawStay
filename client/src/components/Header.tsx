@@ -1,5 +1,6 @@
 import cover from '../assets/hotel.webp';
-import SearchField from './SearchField';
+import SearchAccommodation from './SearchAccommodation';
+
 const Header = () => {
 	return (
 		<div
@@ -15,7 +16,7 @@ const Header = () => {
 				last forever.
 			</p>
 			<div className='mt-10'>
-				<SearchField />
+				<SearchAccommodation />
 			</div>
 		</div>
 	);

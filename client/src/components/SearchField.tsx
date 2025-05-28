@@ -163,7 +163,7 @@ function SearchField() {
 	};
 
 	return (
-		<div className='w-full bg-blue-100 p-4 rounded-xl flex flex-wrap gap-4 items-center justify-center shadow-md'>
+		<div className='w-full bg-blue-200 p-4 rounded-xl flex flex-wrap gap-4 items-center justify-center shadow-md mb-6'>
 			<div className='flex items-center bg-white px-4 py-2 rounded-lg shadow-sm w-full md:w-auto relative'>
 				<FaMapMarkerAlt className='text-blue-500 mr-2' />
 				<input
@@ -264,7 +264,6 @@ function SearchField() {
 					</div>
 				)}
 			</div>
-
 			<button
 				onClick={handleBookingHotel}
 				className='bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition'>
