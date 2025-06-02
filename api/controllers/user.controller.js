@@ -6,6 +6,10 @@ export const updateUser = async (req, res, next) => {
         const { email, username } = req.body;
         const userId = req.params.id;
 
+        if ('isAdmin' in req.body && !req.user.isAdmin) {
+            return res.status(403).json({ message: 'Only Admins can update field' });
+        }
+
         const currentUser = await User.findById(userId)
         if (!currentUser) {
             return res.status(400).json({ message: 'User not found.' })

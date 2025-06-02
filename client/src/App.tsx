@@ -14,6 +14,8 @@ import ProfilePage from './components/ProfilePage';
 import useAxiosInterceptors from './hooks/useAxiosInterceptors';
 import { ReactNode } from 'react';
 import HotelDetailsPage from './pages/HotelDetailsPage';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminRoute from './components/AdminRoute';
 
 interface AxiosWrapperProps {
 	children: ReactNode;
@@ -56,6 +58,14 @@ function App() {
 							}
 						/>
 						<Route path='/profile' element={<ProfilePage />} />
+						<Route
+							path='admindashboard'
+							element={
+								<AdminRoute>
+									<AdminDashboard />
+								</AdminRoute>
+							}
+						/>
 					</Route>
 					<Route path='/login' element={<Login />} />
 					<Route path='/register' element={<Register />} />

@@ -36,7 +36,7 @@ const Login = () => {
 			return false;
 		}
 		if (!passwordRegex.test(formData.password)) {
-			setError('Invalid email format');
+			setError('Invalid password format');
 			return false;
 		}
 		return true;

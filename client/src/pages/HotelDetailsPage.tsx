@@ -3,9 +3,10 @@ import useFetch from '../hooks/useFetch';
 import { AccommodationList } from '../components/Home';
 import logo from '../assets/logo.png';
 import axios from 'axios';
-import SearchField, { Guests } from '../components/SearchField';
+import { Guests } from '../components/BookingField';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import BookingField from '../components/BookingField';
 
 const HotelDetailsPage = () => {
 	const { id } = useParams();
@@ -80,7 +81,7 @@ const HotelDetailsPage = () => {
 
 	return (
 		<div className='max-w-5xl mx-auto px-4 py-8'>
-			<SearchField />
+			<BookingField />
 			<div className='grid md:grid-cols-2 gap-8 bg-blue-200 shadow-xl rounded-2xl overflow-hidden'>
 				<div className='w-full h-64 md:h-auto'>
 					<img

@@ -16,7 +16,7 @@ export interface Guests {
 	children: number;
 }
 
-function SearchField() {
+function BookingField() {
 	const [location, setLocation] = useState('');
 	const [checkIn, setCheckIn] = useState<Date | null>(null);
 	const [checkOut, setCheckOut] = useState<Date | null>(null);
@@ -273,4 +273,4 @@ function SearchField() {
 	);
 }
 
-export default SearchField;
+export default BookingField;

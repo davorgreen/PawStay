@@ -24,16 +24,21 @@ const Navbar = () => {
 				</Link>
 			</div>
 			<div className='flex gap-4'>
-				<button
-					onClick={handleLogoutUser}
-					className='text-white text-xl font-semibold hover:bg-blue-500 px-4 py-2 rounded-lg transition duration-300 ease-in-out'>
-					Logout
-				</button>
+				<Link
+					to={'/admindashboard'}
+					className='text-white text-xl font-semibold flex items-center'>
+					{user && user.isAdmin ? 'Admin dashboard' : null}
+				</Link>
 				<Link
 					to={'/profile'}
 					className='text-white text-xl font-semibold flex items-center'>
 					{''} {user ? user.username : 'no user found'}
 				</Link>
+				<button
+					onClick={handleLogoutUser}
+					className='text-white text-xl font-semibold hover:bg-blue-500 px-4 py-2 rounded-lg transition duration-300 ease-in-out'>
+					Logout
+				</button>
 			</div>
 		</div>
 	);
