@@ -46,6 +46,7 @@ const AdminDashboard = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { user } = useUser();
 	const [showDropdown, setShowDropdown] = useState<boolean>(false);
+	const [allUSers, setAllUsers] = useState<User[]>([]);
 	const [filtered, setFiltered] = useState<User[]>([]);
 	const [loadingForm, setLoadingForm] = useState<boolean>(false);
 
@@ -57,7 +58,7 @@ const AdminDashboard = () => {
 			const filteredUsers = res.data.filter((u: User) => {
 				return u._id !== user?._id;
 			});
-			setFiltered(filteredUsers);
+			setAllUsers(filteredUsers);
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
 				setError(err.response?.data?.message || err.message);
@@ -82,7 +83,6 @@ const AdminDashboard = () => {
 			setLoading(false);
 			return;
 		}
-
 		try {
 			const res = await axios.put(`/api/users/${users._id}`, {
 				username: users.username,
@@ -131,7 +131,6 @@ const AdminDashboard = () => {
 						Edit Accommodation
 					</button>
 				</div>
-
 				{activeTab === 'users' && (
 					<form
 						onSubmit={handleUpdateUserProfile}
@@ -142,13 +141,24 @@ const AdminDashboard = () => {
 								className={inputStyle}
 								value={users.username}
 								onChange={(e) => {
-									setUsers({ ...users, username: e.target.value });
+									const value = e.target.value;
+									setUsers({ ...users, username: value });
 									setShowDropdown(true);
+									setFiltered(
+										allUSers.filter((user) => {
+											return user.username
+												.toLowerCase()
+												.includes(value.toLowerCase());
+										})
+									);
 								}}
-								placeholder='Unesi username!'
+								onFocus={() => {
+									setShowDropdown(true);
+									setFiltered(allUSers);
+								}}
+								placeholder='Enter username!'
 								required
 							/>
-
 							{showDropdown && filtered.length > 0 && (
 								<ul className='absolute  z-10 w-40 bg-white border rounded mt-1 shadow'>
 									{filtered.map((item, index) => (
