@@ -13,9 +13,24 @@ export const createHotel = async (req, res, next) => {
 
 //update
 export const updateHotel = async (req, res, next) => {
+    const { name } = req.body;
+    const hotelId = req.params.id;
+
     try {
+        const currentHotel = await Hotel.findById(hotelId);
+        if (!currentHotel) {
+            return res.status(404).json({ message: 'Hotel not found' });
+        }
+
+        if (name && name !== currentHotel.name) {
+            const existingHotel = await Hotel.findOne({ name });
+            if (existingHotel && existingHotel._id.toString() !== hotelId) {
+                return res.status(400).json({ message: 'Hotel name is already in use!' });
+            }
+        }
+
         const updatedHotel = await Hotel.findByIdAndUpdate(
-            req.params.id,
+            hotelId,
             { $set: req.body },
             { new: true }
         );

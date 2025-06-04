@@ -16,6 +16,7 @@ type Accommodation = {
 	cheapestPrice: number;
 	featured: boolean;
 	rating: number;
+	_id: string;
 };
 
 const AdminDashboard = () => {
@@ -29,7 +30,7 @@ const AdminDashboard = () => {
 		_id: '',
 	});
 	const [accommodation, setAccommodation] = useState<Accommodation>({
-		name: 'Hotel Auroreas Light',
+		name: 'Enter name',
 		type: 'Hotel',
 		city: 'Subotica',
 		address: 'Brace Radic',
@@ -39,6 +40,7 @@ const AdminDashboard = () => {
 		cheapestPrice: 100,
 		featured: false,
 		rating: 4.9,
+		_id: '',
 	});
 	const inputStyle =
 		'border p-2 rounded w-full bg-white text-gray-700';
@@ -46,9 +48,11 @@ const AdminDashboard = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { user } = useUser();
 	const [showDropdown, setShowDropdown] = useState<boolean>(false);
-	const [allUSers, setAllUsers] = useState<User[]>([]);
+	const [allUsers, setAllUsers] = useState<User[]>([]);
 	const [filtered, setFiltered] = useState<User[]>([]);
 	const [loadingForm, setLoadingForm] = useState<boolean>(false);
+	const [allHotels, setAllHotels] = useState<Accommodation[]>([]);
+	const [filteredAcc, setFilteredAcc] = useState<Accommodation[]>([]);
 
 	//allUsers
 	const fetchData = async () => {
@@ -73,6 +77,26 @@ const AdminDashboard = () => {
 		}
 	}, [user]);
 
+	const fetchHotels = async () => {
+		setLoadingForm(true);
+		try {
+			const res = await axios.get('/api/hotels');
+			setAllHotels(res.data);
+		} catch (err) {
+			if (axios.isAxiosError(err)) {
+				setError(err.response?.data?.message || err.message);
+			}
+		} finally {
+			setLoadingForm(false);
+		}
+	};
+
+	//allHotels
+	useEffect(() => {
+		fetchHotels();
+	}, []);
+
+	//userProfileUpdate
 	const handleUpdateUserProfile = async (
 		e: React.FormEvent<HTMLFormElement>
 	) => {
@@ -95,6 +119,35 @@ const AdminDashboard = () => {
 			if (axios.isAxiosError(err)) {
 				setError(err.response?.data?.message || err.message);
 			}
+		} finally {
+			setLoadingForm(false);
+		}
+	};
+
+	//accommodationUpdate
+	const handleUpdateAccommodation = async (
+		e: React.FormEvent<HTMLFormElement>
+	) => {
+		e.preventDefault();
+		setLoadingForm(true);
+		if (!accommodation) {
+			setError('No accommodation selected!');
+			setLoading(false);
+			return;
+		}
+		try {
+			const res = await axios.put(
+				`/api/hotels/${accommodation._id}`,
+				accommodation
+			);
+			console.log(res.data);
+			toast.success('Accommodation updated successfully!');
+			fetchHotels();
+		} catch (err) {
+			if (axios.isAxiosError(err)) {
+				setError(err.response?.data?.message || err.message);
+			}
+			console.log(err);
 		} finally {
 			setLoadingForm(false);
 		}
@@ -145,7 +198,7 @@ const AdminDashboard = () => {
 									setUsers({ ...users, username: value });
 									setShowDropdown(true);
 									setFiltered(
-										allUSers.filter((user) => {
+										allUsers.filter((user) => {
 											return user.username
 												.toLowerCase()
 												.includes(value.toLowerCase());
@@ -154,7 +207,7 @@ const AdminDashboard = () => {
 								}}
 								onFocus={() => {
 									setShowDropdown(true);
-									setFiltered(allUSers);
+									setFiltered(allUsers);
 								}}
 								placeholder='Enter username!'
 								required
@@ -200,7 +253,8 @@ const AdminDashboard = () => {
 								<option value='true'>Yes</option>
 							</select>
 						</div>
-						<div className='block mt-6'>
+						<div className='block mt-0.5'>
+							<label>ID</label>
 							<input
 								className={inputStyle}
 								value={users._id}
@@ -218,19 +272,51 @@ const AdminDashboard = () => {
 				)}
 
 				{activeTab === 'accommodation' && (
-					<form className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+					<form
+						onSubmit={handleUpdateAccommodation}
+						className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 						<div>
 							<label className='block mb-1'>Name</label>
 							<input
 								className={inputStyle}
 								value={accommodation.name}
-								onChange={(e) =>
+								onChange={(e) => {
+									const value = e.target.value;
 									setAccommodation({
 										...accommodation,
-										name: e.target.value,
-									})
-								}
+										name: value,
+									});
+									setShowDropdown(true);
+									setFilteredAcc(
+										allHotels.filter((hotel) => {
+											return hotel.name
+												.toLowerCase()
+												.includes(value.toLowerCase());
+										})
+									);
+								}}
+								onFocus={() => {
+									setShowDropdown(true);
+									setFilteredAcc(allHotels);
+								}}
 							/>
+							{showDropdown && filteredAcc.length > 0 && (
+								<ul className='absolute z-10 w-40 bg-white border rounded mt-1 shadow'>
+									{filteredAcc.map((hotel, index) => {
+										return (
+											<li
+												key={index}
+												className='p-2 hover:bg-blue-200 cursor-pointer'
+												onClick={() => {
+													setAccommodation(hotel);
+													setShowDropdown(false);
+												}}>
+												{hotel.name}
+											</li>
+										);
+									})}
+								</ul>
+							)}
 						</div>
 						<div>
 							<label className='block mb-1'>Type</label>
@@ -353,6 +439,14 @@ const AdminDashboard = () => {
 								<option value='false'>No</option>
 								<option value='true'>Yes</option>
 							</select>
+						</div>
+						<div className='block mt-0.5'>
+							<label>ID</label>
+							<input
+								className={inputStyle}
+								value={accommodation._id}
+								readOnly
+							/>
 						</div>
 						<div className='md:col-span-2 text-right mt-4'>
 							<button

@@ -7,7 +7,7 @@ export const updateUser = async (req, res, next) => {
         const userId = req.params.id;
 
         if ('isAdmin' in req.body && !req.user.isAdmin) {
-            return res.status(403).json({ message: 'Only Admins can update field' });
+            return res.status(403).json({ message: 'Only Admin can update a user' });
         }
 
         const currentUser = await User.findById(userId)
