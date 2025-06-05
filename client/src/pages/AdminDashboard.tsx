@@ -23,7 +23,7 @@ const AdminDashboard = () => {
 	const [activeTab, setActiveTab] = useState<
 		'users' | 'accommodation'
 	>('users');
-	const [users, setUsers] = useState<User>({
+	const [users, setUsers] = useState<User | null>({
 		username: 'Username',
 		email: 'username@gmail.com',
 		isAdmin: false,
@@ -32,8 +32,8 @@ const AdminDashboard = () => {
 	const [accommodation, setAccommodation] = useState<Accommodation>({
 		name: 'Enter name',
 		type: 'Hotel',
-		city: 'Subotica',
-		address: 'Brace Radic',
+		city: 'City',
+		address: 'Street',
 		distance: '500',
 		title: 'Best Hotel in country',
 		description: 'hotel description',
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
 	const [filteredAcc, setFilteredAcc] = useState<Accommodation[]>([]);
 
 	//allUsers
-	const fetchData = async () => {
+	const fetchUsers = async () => {
 		setLoading(true);
 		try {
 			const res = await axios.get<User[]>('/api/users');
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
 
 	useEffect(() => {
 		if (user) {
-			fetchData();
+			fetchUsers();
 		}
 	}, [user]);
 
@@ -113,7 +113,7 @@ const AdminDashboard = () => {
 				email: users.email,
 				isAdmin: users.isAdmin,
 			});
-			fetchData();
+			fetchUsers();
 			toast.success('Profile updated successfully!');
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
@@ -147,7 +147,53 @@ const AdminDashboard = () => {
 			if (axios.isAxiosError(err)) {
 				setError(err.response?.data?.message || err.message);
 			}
-			console.log(err);
+		} finally {
+			setLoadingForm(false);
+		}
+	};
+
+	//deleteUser or deleteAcc
+	const handleDelete = async (id: string, type: string) => {
+		if (!id || !type) {
+			toast.warn('Missing ID or type');
+			return;
+		}
+		setLoadingForm(true);
+		try {
+			if (type === 'user') {
+				await axios.delete(`/api/users/${id}`);
+				toast.success('User deleted successfully');
+				fetchUsers();
+				setUsers({
+					username: 'Username',
+					email: 'username@gmail.com',
+					isAdmin: false,
+					_id: '',
+				});
+			} else if (type === 'accommodation') {
+				await axios.delete(`/api/hotels/${id}`);
+				toast.success('Accommodation deleted successfully');
+				fetchHotels();
+				setAccommodation({
+					name: 'Enter name',
+					type: 'Hotel',
+					city: 'City',
+					address: 'Street',
+					distance: '500',
+					title: 'Best Hotel in country',
+					description: 'hotel description',
+					cheapestPrice: 100,
+					featured: false,
+					rating: 4.9,
+					_id: '',
+				});
+			} else {
+				toast.error('Unknown type');
+			}
+		} catch (err) {
+			if (axios.isAxiosError(err)) {
+				setError(err.response?.data?.message || err.message);
+			}
 		} finally {
 			setLoadingForm(false);
 		}
@@ -262,6 +308,11 @@ const AdminDashboard = () => {
 							/>
 						</div>
 						<div className='md:col-span-2 text-right mt-4'>
+							<button
+								onClick={() => handleDelete(users._id, 'user')}
+								className='bg-red-600 text-white px-6 py-2 flex items-center justify-start rounded hover:bg-red-800'>
+								Delete
+							</button>
 							<button
 								type='submit'
 								className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800'>
@@ -449,6 +500,13 @@ const AdminDashboard = () => {
 							/>
 						</div>
 						<div className='md:col-span-2 text-right mt-4'>
+							<button
+								onClick={() =>
+									handleDelete(accommodation._id, 'accommodation')
+								}
+								className='bg-red-600 text-white px-6 py-2 flex items-center justify-start rounded hover:bg-red-800'>
+								Delete
+							</button>
 							<button
 								type='submit'
 								disabled={loadingForm}
