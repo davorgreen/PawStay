@@ -6,6 +6,7 @@ export interface User {
 	isAdmin: boolean;
 	_id: string;
 	email: string;
+	password?: string;
 }
 //types for context
 export interface UserContextType {

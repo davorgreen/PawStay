@@ -20,16 +20,33 @@ type Accommodation = {
 };
 
 const AdminDashboard = () => {
-	const [activeTab, setActiveTab] = useState<
-		'users' | 'accommodation'
-	>('users');
-	const [users, setUsers] = useState<User>({
+	const initialCreateUser: User = {
+		username: '',
+		email: '',
+		isAdmin: false,
+		_id: '',
+		password: '',
+	};
+	const initialEditUser: User = {
 		username: 'Username',
 		email: 'username@gmail.com',
 		isAdmin: false,
 		_id: '',
-	});
-	const [accommodation, setAccommodation] = useState<Accommodation>({
+	};
+	const initialCreateAccommodation: Accommodation = {
+		name: '',
+		type: '',
+		city: '',
+		address: '',
+		distance: '',
+		title: '',
+		description: '',
+		cheapestPrice: 0,
+		featured: false,
+		rating: 0,
+		_id: '',
+	};
+	const initialEditAccommodation: Accommodation = {
 		name: 'Enter name',
 		type: 'Hotel',
 		city: 'City',
@@ -41,7 +58,18 @@ const AdminDashboard = () => {
 		featured: false,
 		rating: 4.9,
 		_id: '',
-	});
+	};
+	const [users, setUsers] = useState<User>(initialCreateUser);
+	const [accommodation, setAccommodation] = useState<Accommodation>(
+		initialCreateAccommodation
+	);
+	const [activeTab, setActiveTab] = useState<
+		'users' | 'accommodation'
+	>('users');
+	const [formMode, setFormMode] = useState<'create' | 'edit'>(
+		'create'
+	);
+
 	const inputStyle =
 		'border p-2 rounded w-full bg-white text-gray-700';
 	const [loading, setLoading] = useState<boolean>(true);
@@ -53,6 +81,23 @@ const AdminDashboard = () => {
 	const [loadingForm, setLoadingForm] = useState<boolean>(false);
 	const [allHotels, setAllHotels] = useState<Accommodation[]>([]);
 	const [filteredAcc, setFilteredAcc] = useState<Accommodation[]>([]);
+
+	useEffect(() => {
+		if (activeTab === 'users') {
+			if (formMode === 'edit') {
+				setUsers(initialEditUser);
+			} else {
+				setUsers(initialCreateUser);
+			}
+		} else if (activeTab === 'accommodation') {
+			if (formMode === 'edit') {
+				setAccommodation(initialEditAccommodation);
+			} else {
+				setAccommodation(initialCreateAccommodation);
+			}
+		}
+		setShowDropdown(false);
+	}, [formMode, activeTab]);
 
 	//allUsers
 	const fetchUsers = async () => {
@@ -77,6 +122,7 @@ const AdminDashboard = () => {
 		}
 	}, [user]);
 
+	//allAccommodation
 	const fetchHotels = async () => {
 		setLoadingForm(true);
 		try {
@@ -91,7 +137,7 @@ const AdminDashboard = () => {
 		}
 	};
 
-	//allHotels
+	//allAccommodation
 	useEffect(() => {
 		fetchHotels();
 	}, []);
@@ -218,7 +264,7 @@ const AdminDashboard = () => {
 								? 'bg-blue-600 text-white hover:bg-blue-800'
 								: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
 						}`}>
-						Edit User
+						User
 					</button>
 					<button
 						onClick={() => setActiveTab('accommodation')}
@@ -227,294 +273,374 @@ const AdminDashboard = () => {
 								? 'bg-blue-600 text-white hover:bg-blue-800'
 								: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
 						}`}>
-						Edit Accommodation
+						Accommodation
 					</button>
 				</div>
 				{activeTab === 'users' && (
-					<form
-						onSubmit={handleUpdateUserProfile}
-						className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-						<div>
-							<label className='block mb-1'>Username</label>
-							<input
-								className={inputStyle}
-								value={users.username}
-								onChange={(e) => {
-									const value = e.target.value;
-									setUsers({ ...users, username: value });
-									setShowDropdown(true);
-									setFiltered(
-										allUsers.filter((user) => {
-											return user.username
-												.toLowerCase()
-												.includes(value.toLowerCase());
-										})
-									);
-								}}
-								onFocus={() => {
-									setShowDropdown(true);
-									setFiltered(allUsers);
-								}}
-								placeholder='Enter username!'
-								required
-							/>
-							{showDropdown && filtered.length > 0 && (
-								<ul className='absolute  z-10 w-40 bg-white border rounded mt-1 shadow'>
-									{filtered.map((item, index) => (
-										<li
-											key={index}
-											className='p-2 hover:bg-blue-200 cursor-pointer'
-											onClick={() => {
-												setUsers(item);
-												setShowDropdown(false);
-											}}>
-											{`${item.username}`}
-										</li>
-									))}
-								</ul>
-							)}
-						</div>
-						<div>
-							<label className='block mb-1'>Email</label>
-							<input
-								className={inputStyle}
-								value={users.email}
-								onChange={(e) =>
-									setUsers({ ...users, email: e.target.value })
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>Is Admin</label>
-							<select
-								className={inputStyle}
-								value={users.isAdmin ? 'true' : 'false'}
-								onChange={(e) =>
-									setUsers({
-										...users,
-										isAdmin: e.target.value === 'true',
-									})
-								}>
-								<option value='false'>No</option>
-								<option value='true'>Yes</option>
-							</select>
-						</div>
-						<div className='block mt-0.5'>
-							<label>ID</label>
-							<input
-								className={inputStyle}
-								value={users._id}
-								readOnly
-							/>
-						</div>
-						<div className='md:col-span-2 text-right mt-4'>
+					<>
+						<div className='flex gap-6'>
 							<button
-								onClick={() => handleDelete(users._id, 'user')}
-								className='bg-red-600 text-white px-6 py-2 flex items-center justify-start rounded hover:bg-red-800'>
-								Delete
+								onClick={() => setFormMode('create')}
+								className={`px-4 py-2 rounded ${
+									formMode === 'create'
+										? 'bg-blue-600 text-white hover:bg-blue-800'
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								}`}>
+								Create User
 							</button>
 							<button
-								type='submit'
-								className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800'>
-								Save User
+								onClick={() => setFormMode('edit')}
+								className={`px-4 py-2 rounded ${
+									formMode === 'edit'
+										? 'bg-blue-600 text-white hover:bg-blue-800'
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								}`}>
+								Edit User
 							</button>
 						</div>
-					</form>
-				)}
-
-				{activeTab === 'accommodation' && (
-					<form
-						onSubmit={handleUpdateAccommodation}
-						className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-						<div>
-							<label className='block mb-1'>Name</label>
-							<input
-								className={inputStyle}
-								value={accommodation.name}
-								onChange={(e) => {
-									const value = e.target.value;
-									setAccommodation({
-										...accommodation,
-										name: value,
-									});
-									setShowDropdown(true);
-									setFilteredAcc(
-										allHotels.filter((hotel) => {
-											return hotel.name
-												.toLowerCase()
-												.includes(value.toLowerCase());
-										})
-									);
-								}}
-								onFocus={() => {
-									setShowDropdown(true);
-									setFilteredAcc(allHotels);
-								}}
-							/>
-							{showDropdown && filteredAcc.length > 0 && (
-								<ul className='absolute z-10 w-40 bg-white border rounded mt-1 shadow'>
-									{filteredAcc.map((hotel, index) => {
-										return (
+						<form
+							onSubmit={handleUpdateUserProfile}
+							className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-6'>
+							<div>
+								<label className='block mb-1'>Username</label>
+								<input
+									className={inputStyle}
+									value={users.username}
+									onChange={(e) => {
+										const value = e.target.value;
+										setUsers({ ...users, username: value });
+										setShowDropdown(true);
+										setFiltered(
+											formMode === 'create'
+												? []
+												: allUsers.filter((user) => {
+														return user.username
+															.toLowerCase()
+															.includes(value.toLowerCase());
+												  })
+										);
+									}}
+									onFocus={() => {
+										if (formMode !== 'create') {
+											setShowDropdown(true);
+											setFiltered(allUsers);
+										}
+									}}
+									placeholder='Enter username!'
+									required
+								/>
+								{showDropdown && filtered.length > 0 && (
+									<ul className='absolute  z-10 w-40 bg-white border rounded mt-1 shadow'>
+										{filtered.map((item, index) => (
 											<li
 												key={index}
 												className='p-2 hover:bg-blue-200 cursor-pointer'
 												onClick={() => {
-													setAccommodation(hotel);
+													setUsers(item);
 													setShowDropdown(false);
 												}}>
-												{hotel.name}
+												{`${item.username}`}
 											</li>
-										);
-									})}
-								</ul>
+										))}
+									</ul>
+								)}
+							</div>
+							<div>
+								<label className='block mb-1'>Email</label>
+								<input
+									className={inputStyle}
+									value={users.email}
+									onChange={(e) =>
+										setUsers({ ...users, email: e.target.value })
+									}
+								/>
+							</div>
+							{formMode === 'create' && (
+								<div>
+									<label className='block mb-1'>Password</label>
+									<input
+										className={inputStyle}
+										value={users.password}
+										onChange={(e) =>
+											setUsers({ ...users, password: e.target.value })
+										}
+									/>
+								</div>
 							)}
-						</div>
-						<div>
-							<label className='block mb-1'>Type</label>
-							<input
-								className={inputStyle}
-								value={accommodation.type}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										type: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>City</label>
-							<input
-								className={inputStyle}
-								value={accommodation.city}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										city: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>Address</label>
-							<input
-								className={inputStyle}
-								value={accommodation.address}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										address: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>Distance</label>
-							<input
-								className={inputStyle}
-								value={accommodation.distance}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										distance: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>Title</label>
-							<input
-								className={inputStyle}
-								value={accommodation.title}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										title: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div className='md:col-span-2'>
-							<label className='block mb-1'>Description</label>
-							<textarea
-								className={inputStyle}
-								value={accommodation.description}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										description: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>Cheapest Price</label>
-							<input
-								type='number'
-								className={inputStyle}
-								value={accommodation.cheapestPrice}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										cheapestPrice: Number(e.target.value),
-									})
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>Rating</label>
-							<input
-								type='number'
-								step='0.1'
-								className={inputStyle}
-								value={accommodation.rating}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										rating: Number(e.target.value),
-									})
-								}
-							/>
-						</div>
-						<div>
-							<label className='block mb-1'>Featured</label>
-							<select
-								className={inputStyle}
-								value={accommodation.featured ? 'true' : 'false'}
-								onChange={(e) =>
-									setAccommodation({
-										...accommodation,
-										featured: e.target.value === 'true',
-									})
-								}>
-								<option value='false'>No</option>
-								<option value='true'>Yes</option>
-							</select>
-						</div>
-						<div className='block mt-0.5'>
-							<label>ID</label>
-							<input
-								className={inputStyle}
-								value={accommodation._id}
-								readOnly
-							/>
-						</div>
-						<div className='md:col-span-2 text-right mt-4'>
+							<div>
+								<label className='block mb-1'>Is Admin</label>
+								<select
+									className={inputStyle}
+									value={users.isAdmin ? 'true' : 'false'}
+									onChange={(e) =>
+										setUsers({
+											...users,
+											isAdmin: e.target.value === 'true',
+										})
+									}>
+									<option value='false'>No</option>
+									<option value='true'>Yes</option>
+								</select>
+							</div>
+							{formMode === 'edit' && (
+								<div className='block mt-0.5'>
+									<label>ID</label>
+									<input
+										className={inputStyle}
+										value={users._id}
+										readOnly
+									/>
+								</div>
+							)}
+							<div className='md:col-span-2 text-right mt-4'>
+								<button
+									onClick={() => handleDelete(users._id, 'user')}
+									className='bg-red-600 text-white px-6 py-2 flex items-center justify-start rounded hover:bg-red-800'>
+									Delete
+								</button>
+								<button
+									type='submit'
+									className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800'>
+									{loadingForm
+										? formMode === 'create'
+											? 'Creating...'
+											: 'Saving...'
+										: formMode === 'create'
+										? 'Create User'
+										: 'Save User'}
+								</button>
+							</div>
+						</form>
+					</>
+				)}
+
+				{activeTab === 'accommodation' && (
+					<>
+						<div className='flex gap-6'>
 							<button
-								onClick={() =>
-									handleDelete(accommodation._id, 'accommodation')
-								}
-								className='bg-red-600 text-white px-6 py-2 flex items-center justify-start rounded hover:bg-red-800'>
-								Delete
+								onClick={() => setFormMode('create')}
+								className={`px-4 py-2 rounded ${
+									formMode === 'create'
+										? 'bg-blue-600 text-white hover:bg-blue-800'
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								}`}>
+								Create Accommodation
 							</button>
 							<button
-								type='submit'
-								disabled={loadingForm}
-								className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800'>
-								{loadingForm ? 'Saving...' : 'Save Accommodation'}
+								onClick={() => setFormMode('edit')}
+								className={`px-4 py-2 rounded ${
+									formMode === 'edit'
+										? 'bg-blue-600 text-white hover:bg-blue-800'
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								}`}>
+								Edit Acommodation
 							</button>
 						</div>
-					</form>
+						<form
+							onSubmit={handleUpdateAccommodation}
+							className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+							<div>
+								<label className='block mb-1'>Name</label>
+								<input
+									className={inputStyle}
+									value={accommodation.name}
+									onChange={(e) => {
+										const value = e.target.value;
+										setAccommodation({
+											...accommodation,
+											name: value,
+										});
+										setShowDropdown(true);
+										setFilteredAcc(
+											formMode === 'create'
+												? []
+												: allHotels.filter((hotel) => {
+														return hotel.name
+															.toLowerCase()
+															.includes(value.toLowerCase());
+												  })
+										);
+									}}
+									onFocus={() => {
+										if (formMode !== 'create') {
+											setShowDropdown(true);
+											setFilteredAcc(allHotels);
+										}
+									}}
+								/>
+								{showDropdown && filteredAcc.length > 0 && (
+									<ul className='absolute z-10 w-40 bg-white border rounded mt-1 shadow'>
+										{filteredAcc.map((hotel, index) => {
+											return (
+												<li
+													key={index}
+													className='p-2 hover:bg-blue-200 cursor-pointer'
+													onClick={() => {
+														setAccommodation(hotel);
+														setShowDropdown(false);
+													}}>
+													{hotel.name}
+												</li>
+											);
+										})}
+									</ul>
+								)}
+							</div>
+							<div>
+								<label className='block mb-1'>Type</label>
+								<input
+									className={inputStyle}
+									value={accommodation.type}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											type: e.target.value,
+										})
+									}
+								/>
+							</div>
+							<div>
+								<label className='block mb-1'>City</label>
+								<input
+									className={inputStyle}
+									value={accommodation.city}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											city: e.target.value,
+										})
+									}
+								/>
+							</div>
+							<div>
+								<label className='block mb-1'>Address</label>
+								<input
+									className={inputStyle}
+									value={accommodation.address}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											address: e.target.value,
+										})
+									}
+								/>
+							</div>
+							<div>
+								<label className='block mb-1'>Distance</label>
+								<input
+									className={inputStyle}
+									value={accommodation.distance}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											distance: e.target.value,
+										})
+									}
+								/>
+							</div>
+							<div>
+								<label className='block mb-1'>Title</label>
+								<input
+									className={inputStyle}
+									value={accommodation.title}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											title: e.target.value,
+										})
+									}
+								/>
+							</div>
+							<div className='md:col-span-2'>
+								<label className='block mb-1'>Description</label>
+								<textarea
+									className={inputStyle}
+									value={accommodation.description}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											description: e.target.value,
+										})
+									}
+								/>
+							</div>
+							<div>
+								<label className='block mb-1'>Cheapest Price</label>
+								<input
+									type='number'
+									className={inputStyle}
+									value={accommodation.cheapestPrice}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											cheapestPrice: Number(e.target.value),
+										})
+									}
+								/>
+							</div>
+							<div>
+								<label className='block mb-1'>Rating</label>
+								<input
+									type='number'
+									step='0.1'
+									className={inputStyle}
+									value={accommodation.rating}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											rating: Number(e.target.value),
+										})
+									}
+								/>
+							</div>
+							<div>
+								<label className='block mb-1'>Featured</label>
+								<select
+									className={inputStyle}
+									value={accommodation.featured ? 'true' : 'false'}
+									onChange={(e) =>
+										setAccommodation({
+											...accommodation,
+											featured: e.target.value === 'true',
+										})
+									}>
+									<option value='false'>No</option>
+									<option value='true'>Yes</option>
+								</select>
+							</div>
+							{formMode === 'edit' && (
+								<div className='block mt-0.5'>
+									<label>ID</label>
+									<input
+										className={inputStyle}
+										value={accommodation._id}
+										readOnly
+									/>
+								</div>
+							)}
+							<div className='md:col-span-2 text-right mt-4'>
+								<button
+									onClick={() =>
+										handleDelete(accommodation._id, 'accommodation')
+									}
+									className='bg-red-600 text-white px-6 py-2 flex items-center justify-start rounded hover:bg-red-800'>
+									Delete
+								</button>
+								<button
+									type='submit'
+									disabled={loadingForm}
+									className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800'>
+									{loadingForm
+										? formMode === 'create'
+											? 'Creating...'
+											: 'Saving...'
+										: formMode === 'create'
+										? 'Create Accommodation'
+										: 'Save Accommodation'}
+								</button>
+							</div>
+						</form>
+					</>
 				)}
 			</div>
 		</div>
