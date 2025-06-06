@@ -23,7 +23,7 @@ const AdminDashboard = () => {
 	const [activeTab, setActiveTab] = useState<
 		'users' | 'accommodation'
 	>('users');
-	const [users, setUsers] = useState<User | null>({
+	const [users, setUsers] = useState<User>({
 		username: 'Username',
 		email: 'username@gmail.com',
 		isAdmin: false,
