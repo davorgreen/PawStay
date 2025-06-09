@@ -81,6 +81,16 @@ const AdminDashboard = () => {
 	const [loadingForm, setLoadingForm] = useState<boolean>(false);
 	const [allHotels, setAllHotels] = useState<Accommodation[]>([]);
 	const [filteredAcc, setFilteredAcc] = useState<Accommodation[]>([]);
+	const [images, setImages] = useState<File[]>([]);
+	console.log(images);
+	//upload images
+	const handleImageChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		if (e.target.files) {
+			setImages([...e.target.files]);
+		}
+	};
 
 	useEffect(() => {
 		if (activeTab === 'users') {
@@ -143,17 +153,27 @@ const AdminDashboard = () => {
 	}, []);
 
 	//userProfileUpdate
-	const handleUpdateUserProfile = async (
+	const handleUpdateOrCreateUserProfile = async (
 		e: React.FormEvent<HTMLFormElement>
 	) => {
 		e.preventDefault();
 		setLoadingForm(true);
-		if (!users) {
-			setError('No user selected');
-			setLoading(false);
-			return;
-		}
 		try {
+			if (formMode === 'create') {
+				const res = await axios.post(`/api/auth/register`, {
+					username: users.username,
+					email: users.email,
+					password: users.password,
+					isAdmin: users.isAdmin,
+				});
+				toast.success('User created successfully!');
+			} else {
+				if (!users) {
+					setError('No user selected');
+					setLoading(false);
+					return;
+				}
+			}
 			const res = await axios.put(`/api/users/${users._id}`, {
 				username: users.username,
 				email: users.email,
@@ -162,6 +182,7 @@ const AdminDashboard = () => {
 			fetchUsers();
 			toast.success('Profile updated successfully!');
 		} catch (err) {
+			console.log(err);
 			if (axios.isAxiosError(err)) {
 				setError(err.response?.data?.message || err.message);
 			}
@@ -171,7 +192,7 @@ const AdminDashboard = () => {
 	};
 
 	//accommodationUpdate
-	const handleUpdateAccommodation = async (
+	const handleUpdateOrCreateAccommodation = async (
 		e: React.FormEvent<HTMLFormElement>
 	) => {
 		e.preventDefault();
@@ -186,7 +207,6 @@ const AdminDashboard = () => {
 				`/api/hotels/${accommodation._id}`,
 				accommodation
 			);
-			console.log(res.data);
 			toast.success('Accommodation updated successfully!');
 			fetchHotels();
 		} catch (err) {
@@ -299,7 +319,7 @@ const AdminDashboard = () => {
 							</button>
 						</div>
 						<form
-							onSubmit={handleUpdateUserProfile}
+							onSubmit={handleUpdateOrCreateUserProfile}
 							className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-6'>
 							<div>
 								<label className='block mb-1'>Username</label>
@@ -437,7 +457,7 @@ const AdminDashboard = () => {
 							</button>
 						</div>
 						<form
-							onSubmit={handleUpdateAccommodation}
+							onSubmit={handleUpdateOrCreateAccommodation}
 							className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 							<div>
 								<label className='block mb-1'>Name</label>
@@ -607,6 +627,16 @@ const AdminDashboard = () => {
 									<option value='false'>No</option>
 									<option value='true'>Yes</option>
 								</select>
+							</div>
+							<div>
+								<label className='block mb-1'>Upload Images</label>
+								<input
+									className={inputStyle}
+									type='file'
+									multiple
+									accept='image/*'
+									onChange={handleImageChange}
+								/>
 							</div>
 							{formMode === 'edit' && (
 								<div className='block mt-0.5'>
