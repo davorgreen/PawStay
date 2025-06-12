@@ -1,9 +1,21 @@
 import Hotel from '../models/Hotel.js';
+import { uploadBase64Image } from '../utils/cloudinary.js';
 
 //create
 export const createHotel = async (req, res, next) => {
-    const newHotel = new Hotel(req.body);
     try {
+        let photosUrls = [];
+
+        if (req.body.photos && Array.isArray(req.body.photos)) {
+            for (const base64 of req.body.photos) {
+                const result = await uploadBase64Image(base64, "hotels");
+                photosUrls.push(result.secure_url);
+            }
+        }
+        const newHotel = new Hotel({
+            ...req.body,
+            photos: photosUrls.length > 0 ? photosUrls : [],
+        });
         const savedHotel = await newHotel.save();
         res.status(200).json(savedHotel);
     } catch (err) {
@@ -13,27 +25,33 @@ export const createHotel = async (req, res, next) => {
 
 //update
 export const updateHotel = async (req, res, next) => {
-    const { name } = req.body;
+    const { name, photos } = req.body;
     const hotelId = req.params.id;
-
     try {
         const currentHotel = await Hotel.findById(hotelId);
         if (!currentHotel) {
-            return res.status(404).json({ message: 'Hotel not found' });
+            return res.status(404).json({ message: "Hotel not found" });
         }
 
         if (name && name !== currentHotel.name) {
             const existingHotel = await Hotel.findOne({ name });
             if (existingHotel && existingHotel._id.toString() !== hotelId) {
-                return res.status(400).json({ message: 'Hotel name is already in use!' });
+                return res.status(400).json({ message: "Hotel name is already in use!" });
             }
         }
+        let photosUrls = currentHotel.photos || [];
 
-        const updatedHotel = await Hotel.findByIdAndUpdate(
-            hotelId,
-            { $set: req.body },
-            { new: true }
-        );
+        if (photos && Array.isArray(photos)) {
+            for (const base64 of photos) {
+                const result = await uploadBase64Image(base64, "hotels");
+                photosUrls.push(result.secure_url);
+            }
+        }
+        const updatedData = {
+            ...req.body,
+            photos: photosUrls,
+        };
+        const updatedHotel = await Hotel.findByIdAndUpdate(hotelId, { $set: updatedData }, { new: true });
         res.status(200).json(updatedHotel);
     } catch (err) {
         next(err);

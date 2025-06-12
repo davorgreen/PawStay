@@ -2,6 +2,7 @@ import express from 'express';
 import { countByCity, countByType, createHotel, deleteHotel, getAllAccommodationByType, getHotel, getHotels, updateHotel } from '../controllers/hotel.controller.js';
 import { verifyAdmin } from '../utils/verifyToken.js';
 
+
 const router = express.Router();
 
 //create

@@ -27,6 +27,9 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", usersRoute);
 app.use("/api/hotels", hotelsRoute);
 app.use("/api/bookings", bookingRoute);
+app.use(express.json({ limit: '10mb' }));
+
+
 
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500

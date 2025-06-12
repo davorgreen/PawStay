@@ -82,13 +82,13 @@ const AdminDashboard = () => {
 	const [allHotels, setAllHotels] = useState<Accommodation[]>([]);
 	const [filteredAcc, setFilteredAcc] = useState<Accommodation[]>([]);
 	const [images, setImages] = useState<File[]>([]);
-	console.log(images);
+
 	//upload images
 	const handleImageChange = (
 		e: React.ChangeEvent<HTMLInputElement>
 	) => {
 		if (e.target.files) {
-			setImages([...e.target.files]);
+			setImages(Array.from(e.target.files));
 		}
 	};
 
@@ -182,7 +182,6 @@ const AdminDashboard = () => {
 			fetchUsers();
 			toast.success('Profile updated successfully!');
 		} catch (err) {
-			console.log(err);
 			if (axios.isAxiosError(err)) {
 				setError(err.response?.data?.message || err.message);
 			}
@@ -191,23 +190,50 @@ const AdminDashboard = () => {
 		}
 	};
 
+	// function to convert file to Base64 format
+	const getBase64 = (file: File) => {
+		return new Promise<string>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => resolve(reader.result as string);
+			reader.onerror = (error) => reject(error);
+		});
+	};
+
 	//accommodationUpdate
 	const handleUpdateOrCreateAccommodation = async (
 		e: React.FormEvent<HTMLFormElement>
 	) => {
 		e.preventDefault();
 		setLoadingForm(true);
-		if (!accommodation) {
-			setError('No accommodation selected!');
-			setLoading(false);
-			return;
-		}
 		try {
-			const res = await axios.put(
-				`/api/hotels/${accommodation._id}`,
-				accommodation
-			);
-			toast.success('Accommodation updated successfully!');
+			const imageBase64: string[] = [];
+
+			for (const file of images) {
+				const base64 = await getBase64(file);
+				imageBase64.push(base64);
+			}
+			const { _id, ...rest } = accommodation;
+			const dataToSend = {
+				...rest,
+				photos: imageBase64,
+			};
+			console.log(dataToSend);
+			if (formMode === 'create') {
+				await axios.post(`/api/hotels`, dataToSend);
+				toast.success('Accommodation created successfully!');
+			} else {
+				if (!accommodation._id) {
+					setError('No accommodation selected!');
+					setLoadingForm(false);
+					return;
+				}
+				const res = await axios.put(
+					`/api/hotels/${accommodation._id}`,
+					dataToSend
+				);
+				toast.success('Accommodation updated successfully!');
+			}
 			fetchHotels();
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
