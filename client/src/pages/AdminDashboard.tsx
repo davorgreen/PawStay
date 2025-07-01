@@ -82,6 +82,7 @@ const AdminDashboard = () => {
 	const [allHotels, setAllHotels] = useState<Accommodation[]>([]);
 	const [filteredAcc, setFilteredAcc] = useState<Accommodation[]>([]);
 	const [images, setImages] = useState<File[]>([]);
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	//upload images
 	const handleImageChange = (
@@ -113,7 +114,7 @@ const AdminDashboard = () => {
 	const fetchUsers = async () => {
 		setLoading(true);
 		try {
-			const res = await axios.get<User[]>('/api/users');
+			const res = await axios.get<User[]>(`${apiUrl}/users`);
 			const filteredUsers = res.data.filter((u: User) => {
 				return u._id !== user?._id;
 			});
@@ -136,7 +137,7 @@ const AdminDashboard = () => {
 	const fetchHotels = async () => {
 		setLoadingForm(true);
 		try {
-			const res = await axios.get('/api/hotels');
+			const res = await axios.get(`${apiUrl}/hotels`);
 			setAllHotels(res.data);
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
@@ -160,7 +161,7 @@ const AdminDashboard = () => {
 		setLoadingForm(true);
 		try {
 			if (formMode === 'create') {
-				await axios.post(`/api/auth/register`, {
+				await axios.post(`${apiUrl}/auth/register`, {
 					username: users.username,
 					email: users.email,
 					password: users.password,
@@ -174,7 +175,7 @@ const AdminDashboard = () => {
 					return;
 				}
 			}
-			await axios.put(`/api/users/${users._id}`, {
+			await axios.put(`${apiUrl}/users/${users._id}`, {
 				username: users.username,
 				email: users.email,
 				isAdmin: users.isAdmin,
@@ -220,7 +221,7 @@ const AdminDashboard = () => {
 			};
 			console.log(dataToSend);
 			if (formMode === 'create') {
-				await axios.post(`/api/hotels`, dataToSend);
+				await axios.post(`${apiUrl}/hotels`, dataToSend);
 				toast.success('Accommodation created successfully!');
 			} else {
 				if (!accommodation._id) {
@@ -229,7 +230,7 @@ const AdminDashboard = () => {
 					return;
 				}
 				await axios.put(
-					`/api/hotels/${accommodation._id}`,
+					`${apiUrl}/hotels/${accommodation._id}`,
 					dataToSend
 				);
 				toast.success('Accommodation updated successfully!');
@@ -253,7 +254,7 @@ const AdminDashboard = () => {
 		setLoadingForm(true);
 		try {
 			if (type === 'user') {
-				await axios.delete(`/api/users/${id}`);
+				await axios.delete(`${apiUrl}/users/${id}`);
 				toast.success('User deleted successfully');
 				fetchUsers();
 				setUsers({
@@ -263,7 +264,7 @@ const AdminDashboard = () => {
 					_id: '',
 				});
 			} else if (type === 'accommodation') {
-				await axios.delete(`/api/hotels/${id}`);
+				await axios.delete(`${apiUrl}/hotels/${id}`);
 				toast.success('Accommodation deleted successfully');
 				fetchHotels();
 				setAccommodation({

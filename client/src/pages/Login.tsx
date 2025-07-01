@@ -22,6 +22,7 @@ const Login = () => {
 	const navigate = useNavigate();
 	const passwordRegex = /^[A-Z](?=.*\d)[A-Za-z0-9]{7,}$/;
 	const { login } = useUser();
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setError(null);
@@ -50,10 +51,10 @@ const Login = () => {
 		}
 		setLoading(true);
 		try {
-			await axios.post('/api/auth/login', formData, {
+			await axios.post(`${apiUrl}/auth/login`, formData, {
 				withCredentials: true,
 			});
-			const userRes = await axios.get('/api/auth/user', {
+			const userRes = await axios.get(`${apiUrl}/auth/user`, {
 				withCredentials: true,
 			});
 			login({

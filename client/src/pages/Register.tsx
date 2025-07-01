@@ -24,6 +24,7 @@ const Register = () => {
 	const emailRegex =
 		/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 	const passwordRegex = /^[A-Z](?=.*\d)[A-Za-z0-9]{7,}$/;
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setError(null);
@@ -54,7 +55,7 @@ const Register = () => {
 		}
 		setLoading(true);
 		try {
-			await axios.post('/api/auth/register', formData);
+			await axios.post(`${apiUrl}/auth/register`, formData);
 			toast.success('Register successful!');
 			navigate('/login');
 		} catch (err) {
