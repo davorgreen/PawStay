@@ -19,9 +19,10 @@ interface AccommodationType {
 
 const AccommodationList: React.FC = () => {
 	const { type } = useParams();
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const { data, loading, error } = useFetch<AccommodationType[]>(
-		`/api/hotels/byType?type=${type}`
+		`${apiUrl}/hotels/byType?type=${type}`
 	);
 
 	return (

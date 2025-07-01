@@ -32,6 +32,7 @@ function BookingField() {
 	const [showDropdown, setShowDropdown] = useState<boolean>(false);
 	const [disableDates, setDisableDates] = useState<Date[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const handleGuestChange = (type: keyof Guests, value: number) => {
 		setGuests((prev) => ({
@@ -46,7 +47,7 @@ function BookingField() {
 		setDisableDates([]);
 		try {
 			const res = await axios.get<string[]>(
-				`/api/bookings/${location}/reserved-dates`
+				`${apiUrl}/bookings/${location}/reserved-dates`
 			);
 			const convertedDates = res.data.map(
 				(dateStr) => new Date(dateStr)
@@ -97,7 +98,7 @@ function BookingField() {
 		const fetchData = async () => {
 			setLoadingHotels(true);
 			try {
-				const res = await axios.get('/api/hotels');
+				const res = await axios.get(`${apiUrl}/hotels`);
 				setAllHotels(res.data);
 			} catch (err) {
 				if (axios.isAxiosError(err)) {
@@ -148,7 +149,7 @@ function BookingField() {
 		setLoadingHotels(true);
 		try {
 			const payload = { location, checkInDate, checkOutDate, guests };
-			await axios.post('/api/bookings', payload, {
+			await axios.post(`/${apiUrl}/bookings`, payload, {
 				withCredentials: true,
 			});
 			toast.success('Booking completed successfully!');

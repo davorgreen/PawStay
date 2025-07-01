@@ -17,6 +17,7 @@ const SearchAccommodation = () => {
 	const [selectedHotel, setSelectedHotel] =
 		useState<AccommodationList | null>(null);
 	const navigate = useNavigate();
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const fetchReservedDates = async () => {
 		setLoading(true);
@@ -24,7 +25,7 @@ const SearchAccommodation = () => {
 		setDisableDates([]);
 		try {
 			const res = await axios.get<string[]>(
-				`/api/bookings/${location}/reserved-dates`
+				`/${apiUrl}/bookings/${location}/reserved-dates`
 			);
 			const convertedDates = res.data.map(
 				(dateStr) => new Date(dateStr)
@@ -58,7 +59,7 @@ const SearchAccommodation = () => {
 		const fetchData = async () => {
 			setLoadingHotels(true);
 			try {
-				const res = await axios.get('/api/hotels');
+				const res = await axios.get(`${apiUrl}/hotels`);
 				setAllHotels(res.data);
 			} catch (err) {
 				if (axios.isAxiosError(err)) {

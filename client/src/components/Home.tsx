@@ -39,20 +39,21 @@ export default function Home() {
 	const [accommodationError, setAccommodationError] = useState<
 		string | null
 	>(null);
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const OnlyRatedAccommodation = useMemo(() => {
 		return AccommodationListByRating.filter((acc) => acc.rating > 0);
 	}, [AccommodationListByRating]);
 
 	const { data, loading, error } = useFetch<HotelTypeCount[]>(
-		'api/hotels/countByType'
+		`${apiUrl}/hotels/countByType`
 	);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setAccommodationLoading(true);
 			try {
-				const res = await axios.get('/api/hotels');
+				const res = await axios.get(`${apiUrl}/hotels`);
 				setAccommodationListByRating(res.data);
 			} catch (err) {
 				if (axios.isAxiosError(err)) {

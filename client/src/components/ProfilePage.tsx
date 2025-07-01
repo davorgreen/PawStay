@@ -11,6 +11,7 @@ const ProfilePage = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const navigate = useNavigate();
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	useEffect(() => {
 		if (!user) {
@@ -28,7 +29,7 @@ const ProfilePage = () => {
 		setLoading(true);
 
 		try {
-			const res = await axios.put(`/api/users/${user?._id}`, {
+			const res = await axios.put(`/${apiUrl}/users/${user?._id}`, {
 				username,
 				email,
 			});

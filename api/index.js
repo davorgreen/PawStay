@@ -6,6 +6,7 @@ import usersRoute from './routes/users.js'
 import hotelsRoute from './routes/hotels.js'
 import bookingRoute from './routes/booking.js'
 import cookieParser from "cookie-parser";
+import cors from 'cors';
 
 const app = express();
 dotenv.config();
@@ -22,6 +23,7 @@ const connect = async () => {
 //middlewares
 app.use(cookieParser())
 app.use(express.json())
+app.use(cors());
 
 app.use("/api/auth", authRoute);
 app.use("/api/users", usersRoute);
@@ -46,7 +48,7 @@ mongoose.connection.on("disconnected", () => {
     console.log("mongoDB disconnected!");
 })
 
-app.listen(8800, () => {
+app.listen(process.env.PORT || 8800, () => {
     connect();
     console.log("Connected to the backend!");
 })

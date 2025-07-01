@@ -10,6 +10,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 		return storedUser ? JSON.parse(storedUser) : null;
 	});
 	const [loading, setLoading] = useState<boolean>(true);
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	useEffect(() => {
 		const savedUser = localStorage.getItem('user');
@@ -27,7 +28,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	const logout = async () => {
 		try {
 			await axios.post(
-				'/api/auth/logout',
+				`/${apiUrl}/auth/logout`,
 				{},
 				{
 					withCredentials: true,
