@@ -72,6 +72,15 @@ const Login = () => {
 			setLoading(false);
 		}
 	};
+
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	if (error) {
+		return <div>Error: {error}</div>;
+	}
+
 	return (
 		<div>
 			<Link to='/'>
