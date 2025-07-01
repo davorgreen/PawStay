@@ -160,7 +160,7 @@ const AdminDashboard = () => {
 		setLoadingForm(true);
 		try {
 			if (formMode === 'create') {
-				const res = await axios.post(`/api/auth/register`, {
+				await axios.post(`/api/auth/register`, {
 					username: users.username,
 					email: users.email,
 					password: users.password,
@@ -174,7 +174,7 @@ const AdminDashboard = () => {
 					return;
 				}
 			}
-			const res = await axios.put(`/api/users/${users._id}`, {
+			await axios.put(`/api/users/${users._id}`, {
 				username: users.username,
 				email: users.email,
 				isAdmin: users.isAdmin,
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
 				const base64 = await getBase64(file);
 				imageBase64.push(base64);
 			}
-			const { _id, ...rest } = accommodation;
+			const { ...rest } = accommodation;
 			const dataToSend = {
 				...rest,
 				photos: imageBase64,
@@ -228,7 +228,7 @@ const AdminDashboard = () => {
 					setLoadingForm(false);
 					return;
 				}
-				const res = await axios.put(
+				await axios.put(
 					`/api/hotels/${accommodation._id}`,
 					dataToSend
 				);
@@ -290,6 +290,14 @@ const AdminDashboard = () => {
 			setLoadingForm(false);
 		}
 	};
+
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	if (error) {
+		return <div>Error: {error}</div>;
+	}
 
 	return (
 		<div className='min-h-screen bg-blue-300 p-6'>
