@@ -55,7 +55,9 @@ const Register = () => {
 		}
 		setLoading(true);
 		try {
-			await axios.post(`${apiUrl}/auth/register`, formData);
+			await axios.post(`${apiUrl}/auth/register`, formData, {
+				withCredentials: true,
+			});
 			toast.success('Register successful!');
 			navigate('/login');
 		} catch (err) {

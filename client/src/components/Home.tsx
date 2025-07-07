@@ -53,7 +53,9 @@ export default function Home() {
 		const fetchData = async () => {
 			setAccommodationLoading(true);
 			try {
-				const res = await axios.get(`${apiUrl}/hotels`);
+				const res = await axios.get(`${apiUrl}/hotels`, {
+					withCredentials: true,
+				});
 				setAccommodationListByRating(res.data);
 			} catch (err) {
 				if (axios.isAxiosError(err)) {

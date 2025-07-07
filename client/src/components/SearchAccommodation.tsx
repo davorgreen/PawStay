@@ -25,7 +25,10 @@ const SearchAccommodation = () => {
 		setDisableDates([]);
 		try {
 			const res = await axios.get<string[]>(
-				`/${apiUrl}/bookings/${location}/reserved-dates`
+				`/${apiUrl}/bookings/${location}/reserved-dates`,
+				{
+					withCredentials: true,
+				}
 			);
 			const convertedDates = res.data.map(
 				(dateStr) => new Date(dateStr)
@@ -59,7 +62,9 @@ const SearchAccommodation = () => {
 		const fetchData = async () => {
 			setLoadingHotels(true);
 			try {
-				const res = await axios.get(`${apiUrl}/hotels`);
+				const res = await axios.get(`${apiUrl}/hotels`, {
+					withCredentials: true,
+				});
 				setAllHotels(res.data);
 			} catch (err) {
 				if (axios.isAxiosError(err)) {

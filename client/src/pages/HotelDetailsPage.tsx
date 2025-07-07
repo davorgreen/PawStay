@@ -17,9 +17,10 @@ const HotelDetailsPage = () => {
 	const [showGuestOptions, setShowGuestOptions] = useState(false);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [loadingBooked, setLoadingBooked] = useState<boolean>(false);
+	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const { data, loading, error } = useFetch<AccommodationList>(
-		`/api/hotels/find/${id}`
+		`${apiUrl}/hotels/find/${id}`
 	);
 
 	if (loading)
@@ -58,7 +59,7 @@ const HotelDetailsPage = () => {
 
 		setLoadingBooked(true);
 		try {
-			await axios.post('/api/bookings', payload, {
+			await axios.post(`${apiUrl}/bookings`, payload, {
 				withCredentials: true,
 			});
 			toast.success('Booking completed successfully!');

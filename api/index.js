@@ -8,6 +8,8 @@ import bookingRoute from './routes/booking.js'
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174']
+
 const app = express();
 dotenv.config();
 
@@ -23,7 +25,16 @@ const connect = async () => {
 //middlewares
 app.use(cookieParser())
 app.use(express.json())
-app.use(cors());
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+}));
 
 app.use("/api/auth", authRoute);
 app.use("/api/users", usersRoute);
@@ -48,7 +59,7 @@ mongoose.connection.on("disconnected", () => {
     console.log("mongoDB disconnected!");
 })
 
-app.listen(process.env.PORT || 8800, () => {
+app.listen(8800, () => {
     connect();
     console.log("Connected to the backend!");
 })

@@ -114,7 +114,9 @@ const AdminDashboard = () => {
 	const fetchUsers = async () => {
 		setLoading(true);
 		try {
-			const res = await axios.get<User[]>(`${apiUrl}/users`);
+			const res = await axios.get<User[]>(`${apiUrl}/users`, {
+				withCredentials: true,
+			});
 			const filteredUsers = res.data.filter((u: User) => {
 				return u._id !== user?._id;
 			});
@@ -137,7 +139,9 @@ const AdminDashboard = () => {
 	const fetchHotels = async () => {
 		setLoadingForm(true);
 		try {
-			const res = await axios.get(`${apiUrl}/hotels`);
+			const res = await axios.get(`${apiUrl}/hotels`, {
+				withCredentials: true,
+			});
 			setAllHotels(res.data);
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
@@ -161,12 +165,18 @@ const AdminDashboard = () => {
 		setLoadingForm(true);
 		try {
 			if (formMode === 'create') {
-				await axios.post(`${apiUrl}/auth/register`, {
-					username: users.username,
-					email: users.email,
-					password: users.password,
-					isAdmin: users.isAdmin,
-				});
+				await axios.post(
+					`${apiUrl}/auth/register`,
+					{
+						username: users.username,
+						email: users.email,
+						password: users.password,
+						isAdmin: users.isAdmin,
+					},
+					{
+						withCredentials: true,
+					}
+				);
 				toast.success('User created successfully!');
 			} else {
 				if (!users) {
@@ -175,11 +185,15 @@ const AdminDashboard = () => {
 					return;
 				}
 			}
-			await axios.put(`${apiUrl}/users/${users._id}`, {
-				username: users.username,
-				email: users.email,
-				isAdmin: users.isAdmin,
-			});
+			await axios.put(
+				`${apiUrl}/users/${users._id}`,
+				{
+					username: users.username,
+					email: users.email,
+					isAdmin: users.isAdmin,
+				},
+				{ withCredentials: true }
+			);
 			fetchUsers();
 			toast.success('Profile updated successfully!');
 		} catch (err) {
@@ -221,7 +235,9 @@ const AdminDashboard = () => {
 			};
 			console.log(dataToSend);
 			if (formMode === 'create') {
-				await axios.post(`${apiUrl}/hotels`, dataToSend);
+				await axios.post(`${apiUrl}/hotels`, dataToSend, {
+					withCredentials: true,
+				});
 				toast.success('Accommodation created successfully!');
 			} else {
 				if (!accommodation._id) {
@@ -231,7 +247,10 @@ const AdminDashboard = () => {
 				}
 				await axios.put(
 					`${apiUrl}/hotels/${accommodation._id}`,
-					dataToSend
+					dataToSend,
+					{
+						withCredentials: true,
+					}
 				);
 				toast.success('Accommodation updated successfully!');
 			}
@@ -254,7 +273,9 @@ const AdminDashboard = () => {
 		setLoadingForm(true);
 		try {
 			if (type === 'user') {
-				await axios.delete(`${apiUrl}/users/${id}`);
+				await axios.delete(`${apiUrl}/users/${id}`, {
+					withCredentials: true,
+				});
 				toast.success('User deleted successfully');
 				fetchUsers();
 				setUsers({
@@ -264,7 +285,9 @@ const AdminDashboard = () => {
 					_id: '',
 				});
 			} else if (type === 'accommodation') {
-				await axios.delete(`${apiUrl}/hotels/${id}`);
+				await axios.delete(`${apiUrl}/hotels/${id}`, {
+					withCredentials: true,
+				});
 				toast.success('Accommodation deleted successfully');
 				fetchHotels();
 				setAccommodation({

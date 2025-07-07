@@ -29,10 +29,16 @@ const ProfilePage = () => {
 		setLoading(true);
 
 		try {
-			const res = await axios.put(`/${apiUrl}/users/${user?._id}`, {
-				username,
-				email,
-			});
+			const res = await axios.put(
+				`${apiUrl}/users/${user?._id}`,
+				{
+					username,
+					email,
+				},
+				{
+					withCredentials: true,
+				}
+			);
 			setUser(res.data);
 			localStorage.setItem('user', JSON.stringify(res.data));
 			toast.success('Profile updated successfully!');
