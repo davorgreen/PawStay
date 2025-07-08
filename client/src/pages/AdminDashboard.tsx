@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { all } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
@@ -178,6 +178,7 @@ const AdminDashboard = () => {
 					}
 				);
 				toast.success('User created successfully!');
+				fetchUsers();
 			} else {
 				if (!users) {
 					setError('No user selected');
@@ -228,17 +229,18 @@ const AdminDashboard = () => {
 				const base64 = await getBase64(file);
 				imageBase64.push(base64);
 			}
-			const { ...rest } = accommodation;
+			const { _id, ...rest } = accommodation;
 			const dataToSend = {
 				...rest,
 				photos: imageBase64,
 			};
-			console.log(dataToSend);
+			console.log(accommodation);
 			if (formMode === 'create') {
 				await axios.post(`${apiUrl}/hotels`, dataToSend, {
 					withCredentials: true,
 				});
 				toast.success('Accommodation created successfully!');
+				fetchHotels();
 			} else {
 				if (!accommodation._id) {
 					setError('No accommodation selected!');
@@ -253,8 +255,8 @@ const AdminDashboard = () => {
 					}
 				);
 				toast.success('Accommodation updated successfully!');
+				fetchHotels();
 			}
-			fetchHotels();
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
 				setError(err.response?.data?.message || err.message);
@@ -314,14 +316,6 @@ const AdminDashboard = () => {
 			setLoadingForm(false);
 		}
 	};
-
-	if (loading) {
-		return <div>Loading...</div>;
-	}
-
-	if (error) {
-		return <div>Error: {error}</div>;
-	}
 
 	return (
 		<div className='min-h-screen bg-blue-300 p-6'>

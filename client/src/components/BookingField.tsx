@@ -32,6 +32,8 @@ function BookingField() {
 	const [showDropdown, setShowDropdown] = useState<boolean>(false);
 	const [disableDates, setDisableDates] = useState<Date[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [selectedHotel, setSelectedHotel] =
+		useState<AccommodationList | null>(null);
 	const apiUrl = import.meta.env.VITE_API_URL;
 
 	const handleGuestChange = (type: keyof Guests, value: number) => {
@@ -42,12 +44,13 @@ function BookingField() {
 	};
 
 	const fetchReservedDates = async () => {
+		if (!selectedHotel) return;
 		setLoading(true);
 		setError(null);
 		setDisableDates([]);
 		try {
 			const res = await axios.get<string[]>(
-				`${apiUrl}/bookings/${location}/reserved-dates`,
+				`${apiUrl}/bookings/${selectedHotel.name}/reserved-dates`,
 				{
 					withCredentials: true,
 				}
@@ -62,13 +65,12 @@ function BookingField() {
 			}
 		} finally {
 			setLoading(false);
-			console.log(disableDates);
 		}
 	};
 
 	//getReservedDatesByHotelName
 	useEffect(() => {
-		if (!location) {
+		if (!selectedHotel) {
 			setDisableDates([]);
 			return;
 		}
@@ -77,7 +79,7 @@ function BookingField() {
 		return () => {
 			debouncedFetch.cancel();
 		};
-	}, [location]);
+	}, [selectedHotel]);
 
 	//dropdown
 	useEffect(() => {
@@ -168,9 +170,6 @@ function BookingField() {
 		}
 	};
 
-	if (loading || loadingHotels) {
-		return <div>Loading...</div>;
-	}
 	return (
 		<div className='w-full bg-blue-200 p-4 rounded-xl flex flex-wrap gap-4 items-center justify-center shadow-md mb-6'>
 			<div className='flex items-center bg-white px-4 py-2 rounded-lg shadow-sm w-full md:w-auto relative'>
@@ -194,7 +193,9 @@ function BookingField() {
 								className='p-2 hover:bg-blue-200 cursor-pointer'
 								onClick={() => {
 									setLocation(item.name);
+									setSelectedHotel(item);
 									setShowDropdown(false);
+									fetchReservedDates();
 								}}>
 								{`${item.name} ${item.city}`}
 							</li>

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { debounce } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { AccommodationList } from './Home';

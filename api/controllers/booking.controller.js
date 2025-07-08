@@ -37,7 +37,6 @@ export const bookingAccommodation = async (req, res, next) => {
 export const getBookedDaysByHotelName = async (req, res, next) => {
     try {
         const hotelName = req.params.hotelName;
-        console.log(hotelName)
         const hotel = await Hotel.findOne({ name: hotelName });
         if (!hotel) return next(createError(404, 'No Hotel found'));
 

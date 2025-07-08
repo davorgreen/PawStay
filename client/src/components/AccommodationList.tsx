@@ -52,7 +52,7 @@ const AccommodationList: React.FC = () => {
 								{accommodation.distance} meters
 							</p>
 							<p className='text-gray-500 text-lg font-semibold'>
-								{accommodation.description}
+								{accommodation.description.slice(0, 25)}
 							</p>
 							<p className='text-lg font-bold text-blue-500'>
 								${accommodation.cheapestPrice} / night

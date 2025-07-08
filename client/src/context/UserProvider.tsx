@@ -26,17 +26,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	};
 
 	const logout = async () => {
-		try {
-			await axios.post(
-				`${apiUrl}/auth/logout`,
-				{},
-				{
-					withCredentials: true,
-				}
-			);
-		} catch (err) {
-			console.error('Logout error:', err);
-		}
+		await axios.post(
+			`${apiUrl}/auth/logout`,
+			{},
+			{
+				withCredentials: true,
+			}
+		);
 		localStorage.removeItem('user');
 		setUser(null);
 	};

@@ -23,7 +23,6 @@ const Login = () => {
 	const passwordRegex = /^[A-Z](?=.*\d)[A-Za-z0-9]{7,}$/;
 	const { login } = useUser();
 	const apiUrl = import.meta.env.VITE_API_URL;
-	console.log('API URL:', apiUrl);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setError(null);
