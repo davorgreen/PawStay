@@ -42,7 +42,9 @@ export const getBookedDaysByHotelName = async (req, res, next) => {
         if (!hotel) return next(createError(404, 'No Hotel found'));
 
         const bookedDays = await Booking.find({ accommodationId: hotel._id });
-        if (bookedDays.length === 0) return next(createError(404, 'No Dates found'));
+        if (bookedDays.length === 0) {
+            return res.json([]);
+        }
 
         const reservedDates = bookedDays.flatMap((booked) => {
             const dates = [];

@@ -19,44 +19,6 @@ const SearchAccommodation = () => {
 	const navigate = useNavigate();
 	const apiUrl = import.meta.env.VITE_API_URL;
 
-	const fetchReservedDates = async () => {
-		setLoading(true);
-		setError(null);
-		setDisableDates([]);
-		try {
-			const res = await axios.get<string[]>(
-				`/${apiUrl}/bookings/${location}/reserved-dates`,
-				{
-					withCredentials: true,
-				}
-			);
-			const convertedDates = res.data.map(
-				(dateStr) => new Date(dateStr)
-			);
-			setDisableDates(convertedDates);
-		} catch (err) {
-			if (axios.isAxiosError(err)) {
-				setError(err.response?.data?.message || err.message);
-			}
-		} finally {
-			setLoading(false);
-			console.log(disableDates);
-		}
-	};
-
-	//getReservedDatesByHotelName
-	useEffect(() => {
-		if (!location) {
-			setDisableDates([]);
-			return;
-		}
-		const debouncedFetch = debounce(fetchReservedDates, 1000);
-		debouncedFetch();
-		return () => {
-			debouncedFetch.cancel();
-		};
-	}, [location]);
-
 	//allHotels
 	useEffect(() => {
 		const fetchData = async () => {
@@ -85,13 +47,30 @@ const SearchAccommodation = () => {
 		);
 	}, [allHotels, location]);
 
-	if (loading || loadingHotels) {
-		return <div>Loading...</div>;
-	}
-
-	if (error) {
-		return <div>Error: {error}</div>;
-	}
+	const fetchReservedDates = async () => {
+		if (!selectedHotel) return;
+		setLoading(true);
+		setError(null);
+		setDisableDates([]);
+		try {
+			const res = await axios.get<string[]>(
+				`${apiUrl}/bookings/${selectedHotel.name}/reserved-dates`,
+				{
+					withCredentials: true,
+				}
+			);
+			const convertedDates = res.data.map(
+				(dateStr) => new Date(dateStr)
+			);
+			setDisableDates(convertedDates);
+		} catch (err) {
+			if (axios.isAxiosError(err)) {
+				setError(err.response?.data?.message || err.message);
+			}
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
 		<div className='w-full bg-blue-100 p-4 rounded-xl flex flex-wrap gap-4 items-center justify-center shadow-md'>
@@ -117,6 +96,7 @@ const SearchAccommodation = () => {
 								onClick={() => {
 									setLocation(item.name);
 									setSelectedHotel(item);
+									fetchReservedDates();
 									setShowDropdown(false);
 								}}>
 								{`${item.name} ${item.city}`}
